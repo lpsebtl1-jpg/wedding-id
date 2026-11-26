@@ -1,0 +1,2493 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding.id — AI Digital Wedding Invitation Studio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Font Awesome (Secondary Icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts: Playfair Display, Cormorant Garamond, Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tone.js untuk musik instrumen romantis bawaan -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'],
+                        cormorant: ['"Cormorant Garamond"', 'serif'],
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(18px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        :root {
+            --inv-bg: #FAF7F2;
+            --inv-surface: #FFFFFF;
+            --inv-primary: #B48A3E;
+            --inv-secondary: #2C241E;
+            --inv-text: #3A322C;
+            --inv-border: rgba(180, 138, 62, 0.25);
+            --inv-font-heading: 'Playfair Display', serif;
+            --inv-font-body: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .inv-theme-wrapper {
+            background-color: var(--inv-bg);
+            color: var(--inv-text);
+            font-family: var(--inv-font-body);
+            transition: all 0.4s ease;
+        }
+        .inv-heading { font-family: var(--inv-font-heading); color: var(--inv-secondary); }
+        .inv-accent-text { color: var(--inv-primary); }
+        .inv-accent-bg { background-color: var(--inv-primary); color: #ffffff; }
+        .inv-surface { background-color: var(--inv-surface); border: 1px solid var(--inv-border); }
+        .inv-border { border-color: var(--inv-border); }
+
+        .vinyl-disc {
+            background: radial-gradient(circle, #1e293b 22%, #0f172a 24%, #1e293b 35%, #0f172a 37%, #1e293b 50%, #0f172a 52%, #1e293b 70%, #0f172a 100%);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
+        }
+
+        .cover-curtain {
+            transition: transform 1.05s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.85s ease;
+        }
+        .cover-curtain.opened {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased selection:bg-amber-200 selection:text-slate-900">
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ==================== PAYWALL & DEVELOPER ACCESS GATE ==================== -->
+    <div id="paywall-gate" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto">
+        <div class="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden text-white my-auto animate-fade-in-up">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-slate-900 p-6 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-serif font-bold text-lg shadow-lg">
+                        W.id
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-serif font-bold text-xl text-amber-100">Wedding.id Studio</h2>
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">Locked</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Aktivasi Lisensi Klien atau Login Developer untuk Membuka Studio</p>
+                    </div>
+                </div>
+                <i data-lucide="lock" class="w-5 h-5 text-amber-400"></i>
+            </div>
+
+            <!-- Gate Tabs -->
+            <div class="grid grid-cols-2 bg-slate-950/60 p-1.5 mx-6 mt-5 rounded-2xl border border-slate-800">
+                <button type="button" onclick="switchGateTab('client')" id="gate-tab-client" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition bg-amber-500 text-slate-950 shadow flex items-center justify-center gap-2">
+                    <i data-lucide="qr-code" class="w-4 h-4"></i> Bayar QRIS / Transfer
+                </button>
+                <button type="button" onclick="switchGateTab('dev')" id="gate-tab-dev" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-400 hover:text-white flex items-center justify-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Login Developer
+                </button>
+            </div>
+
+            <!-- TAB A: CLIENT PAYMENT (QRIS & TRANSFER + ACTIVATION CODE) -->
+            <div id="gate-content-client" class="p-6 space-y-5">
+                <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4">
+                    <!-- QRIS Display -->
+                    <div class="w-36 h-36 bg-white rounded-2xl p-2 flex flex-col items-center justify-center shrink-0 shadow-md">
+                        <img id="gate-qris-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=WEDDING-ID-QRIS-PAYMENT-OFFICIAL" alt="Scan QRIS" class="w-28 h-28 object-contain">
+                        <span class="text-[9px] font-bold text-slate-800 tracking-wider mt-1">SCAN QRIS OFFICIAL</span>
+                    </div>
+                    <div class="flex-1 space-y-2 text-center sm:text-left">
+                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">
+                            <span>Paket Akses Penuh:</span>
+                            <span id="gate-price-display" class="font-bold">Rp 99.000</span>
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Scan kode <strong>QRIS</strong> di samping atau lakukan transfer bank ke rekening resmi berikut:
+                        </p>
+                        <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs space-y-0.5">
+                            <p class="text-amber-300 font-bold" id="gate-bank-name">BANK BCA — 8830912456</p>
+                            <p class="text-slate-400" id="gate-bank-holder">a.n. Admin Wedding.id Studio</p>
+                        </div>
+                        <button type="button" onclick="confirmPaymentWhatsApp()" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> Kirim Bukti & Minta Kode Akses
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Activation Code Form -->
+                <form onsubmit="verifyClientActivationCode(event)" class="space-y-3 pt-1">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">Sudah Bayar? Masukkan Kode Aktivasi Klien:</label>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="client-activation-input" required placeholder="Contoh: WID-PRO-2026" class="flex-1 px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-bold text-sm shadow-lg transition shrink-0">
+                            Buka Akses
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- TAB B: DEVELOPER LOGIN -->
+            <div id="gate-content-dev" class="hidden p-6 space-y-5">
+                <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+                    <i data-lucide="terminal" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i>
+                    <div class="text-xs text-slate-300 space-y-1">
+                        <p class="font-bold text-amber-200">Akses Khusus Pemilik & Developer</p>
+                        <p>Masuk menggunakan <strong>Developer Access Key</strong> untuk membuka studio tanpa pembayaran serta mengelola QRIS, rekening transfer, dan generator kode lisensi klien.</p>
+                    </div>
+                </div>
+
+                <form onsubmit="verifyDeveloperLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Developer Access Key</label>
+                        <input type="password" id="dev-key-input" required placeholder="Masukkan kunci developer..." class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-amber-400">
+                    </div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">Default Key: <code class="text-amber-300">DEV-WEDDINGID-2026</code></span>
+                        <button type="button" onclick="document.getElementById('dev-key-input').value = adminConfig.devKey" class="text-amber-400 hover:underline font-medium">Isi Otomatis</button>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                        <i data-lucide="unlock" class="w-4 h-4"></i> Masuk sebagai Developer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOP STUDIO NAVBAR ==================== -->
+    <header id="studio-navbar" class="sticky top-0 z-50 bg-slate-900 text-white border-b border-slate-800 shadow-lg">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-3">
+            <!-- Brand & Custom Logo -->
+            <div class="flex items-center gap-3">
+                <label title="Klik untuk ganti logo Wedding.id" class="cursor-pointer group relative w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-serif font-bold text-lg shadow-md overflow-hidden shrink-0">
+                    <span id="navbar-default-logo" class="tracking-tighter">W.id</span>
+                    <img id="navbar-custom-logo" src="" alt="Logo Brand" class="hidden w-full h-full object-contain bg-white p-1">
+                    <span class="absolute inset-0 bg-black/50 text-white text-[10px] opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                        <i class="fa-solid fa-camera"></i>
+                    </span>
+                    <input type="file" accept="image/*" class="hidden" onchange="handleBrandLogoUpload(event)">
+                </label>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-serif font-bold text-base sm:text-lg tracking-wide text-amber-100 leading-tight">Wedding.id</h1>
+                        <span id="role-badge" class="hidden text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30">Developer</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 hidden sm:block">AI Wedding Invitation & Photo Studio</p>
+                </div>
+            </div>
+
+            <!-- View Mode Switcher -->
+            <div class="flex items-center bg-slate-800/90 p-1 rounded-xl border border-slate-700">
+                <button onclick="setWorkspaceMode('split')" id="btn-mode-split" class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition bg-amber-500 text-slate-950 shadow">
+                    <i data-lucide="columns-2" class="w-3.5 h-3.5"></i> Split Studio
+                </button>
+                <button onclick="setWorkspaceMode('editor')" id="btn-mode-editor" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition text-slate-300 hover:text-white">
+                    <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i> <span>Editor</span>
+                </button>
+                <button onclick="setWorkspaceMode('preview')" id="btn-mode-preview" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition text-slate-300 hover:text-white">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> <span>Pratinjau</span>
+                </button>
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-2">
+                <!-- Developer Admin Panel Button (Visible only when logged in as Developer) -->
+                <button id="btn-admin-panel" onclick="openAdminModal()" class="hidden items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 font-semibold text-xs px-3 py-2 rounded-xl transition">
+                    <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                    <span class="hidden md:inline">Admin & Pembayaran</span>
+                </button>
+
+                <button onclick="lockStudioAgain()" title="Kunci Kembali Aplikasi" class="p-2 text-slate-400 hover:text-amber-400 hover:bg-slate-800 rounded-xl transition">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                </button>
+
+                <button onclick="openPublishModal()" class="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-bold text-xs sm:text-sm px-3.5 sm:px-4 py-2 rounded-xl shadow-lg shadow-amber-500/20 transition transform active:scale-95">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                    <span>Terbitkan Link</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== FLOATING EXIT GUEST MODE BAR ==================== -->
+    <div id="guest-mode-banner" class="hidden fixed top-4 left-4 z-[90]">
+        <button onclick="exitPureGuestMode()" class="flex items-center gap-2 bg-slate-900/85 hover:bg-slate-900 text-white backdrop-blur-md text-xs font-medium px-3.5 py-2 rounded-full shadow-xl border border-white/15 transition">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+            <span>Edit di Studio</span>
+        </button>
+    </div>
+
+    <!-- ==================== MAIN WORKSPACE CONTAINER ==================== -->
+    <main id="main-workspace" class="max-w-[1600px] mx-auto flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
+
+        <!-- ==================== LEFT PANEL: STUDIO EDITOR ==================== -->
+        <aside id="editor-panel" class="w-full lg:w-[48%] xl:w-[45%] bg-white border-r border-slate-200 flex flex-col lg:h-[calc(100vh-4rem)] lg:sticky lg:top-16">
+            
+            <!-- Editor Navigation Tabs -->
+            <nav class="flex overflow-x-auto border-b border-slate-200 bg-slate-50/80 px-2 pt-2 gap-1 shrink-0">
+                <button onclick="switchTab('theme')" data-tab="theme" class="editor-tab active-tab flex items-center gap-1.5 px-3 py-2.5 text-xs sm:text-sm font-semibold rounded-t-xl border-b-2 border-amber-600 text-amber-700 bg-white whitespace-nowrap transition">
+                    <i data-lucide="palette" class="w-4 h-4"></i> Tema & AI
+                </button>
+                <button onclick="switchTab('ai-studio')" data-tab="ai-studio" class="editor-tab flex items-center gap-1.5 px-3 py-2.5 text-xs sm:text-sm font-medium rounded-t-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition">
+                    <i data-lucide="camera" class="w-4 h-4 text-rose-500"></i> AI Photo Studio
+                    <span class="bg-rose-100 text-rose-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full">AI</span>
+                </button>
+                <button onclick="switchTab('couple')" data-tab="couple" class="editor-tab flex items-center gap-1.5 px-3 py-2.5 text-xs sm:text-sm font-medium rounded-t-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition">
+                    <i data-lucide="heart" class="w-4 h-4"></i> Mempelai
+                </button>
+                <button onclick="switchTab('event')" data-tab="event" class="editor-tab flex items-center gap-1.5 px-3 py-2.5 text-xs sm:text-sm font-medium rounded-t-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> Acara
+                </button>
+                <button onclick="switchTab('media')" data-tab="media" class="editor-tab flex items-center gap-1.5 px-3 py-2.5 text-xs sm:text-sm font-medium rounded-t-xl border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition">
+                    <i data-lucide="music" class="w-4 h-4"></i> Musik & Galeri
+                </button>
+            </nav>
+
+            <!-- Editor Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+
+                <!-- BRAND LOGO CUSTOMIZER CARD -->
+                <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 text-white border border-slate-700/80 shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-slate-950 font-serif font-bold text-lg overflow-hidden shrink-0 border border-white/20">
+                            <span id="editor-default-logo">W.id</span>
+                            <img id="editor-custom-logo" src="" alt="Logo Preview" class="hidden w-full h-full object-contain bg-white p-1">
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="font-serif font-bold text-sm text-amber-100">Logo Brand Wedding.id</h3>
+                                <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full">Kustom</span>
+                            </div>
+                            <p class="text-[11px] text-slate-300 mt-0.5">Ganti logo header & watermark undangan dengan logo milikmu sendiri.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+                        <label class="cursor-pointer px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition shadow">
+                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                            <span>Ganti Logo</span>
+                            <input type="file" accept="image/*" class="hidden" onchange="handleBrandLogoUpload(event)">
+                        </label>
+                        <button type="button" id="btn-reset-logo" onclick="resetBrandLogo()" class="hidden px-2.5 py-2 rounded-xl bg-white/10 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 text-xs font-medium transition" title="Kembalikan Logo Default">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ==================== TAB 1: TEMA & AI THEME MATCHER ==================== -->
+                <section id="tab-theme" class="tab-content space-y-6">
+                    <div class="rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-amber-950 text-white p-5 shadow-xl relative overflow-hidden">
+                        <div class="flex items-center gap-2.5 mb-2">
+                            <span class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-300">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            </span>
+                            <div>
+                                <h2 class="font-serif font-bold text-base sm:text-lg text-amber-100">AI Theme & Quote Generator</h2>
+                                <p class="text-xs text-slate-300">Deskripsikan impian pernikahanmu, AI merancang palet warna, tipografi & puisi.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 space-y-3">
+                            <textarea id="ai-theme-prompt" rows="2" placeholder="Contoh: Pernikahan adat Jawa keraton mewah nuansa hitam dan emas klasik, atau Garden botanical sage green..." class="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 text-xs sm:text-sm p-3 focus:outline-none focus:ring-2 focus:ring-amber-400"></textarea>
+                            
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" onclick="fillThemePrompt('Pernikahan Adat Jawa Keraton mewah nuansa hitam beludru dan emas klasik')" class="text-[11px] bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-amber-200 transition">✨ Javanese Royal</button>
+                                <button type="button" onclick="fillThemePrompt('Pernikahan Garden Botanical sage green putih bersih minimalis modern')" class="text-[11px] bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-emerald-200 transition">🌿 Botanical Sage</button>
+                                <button type="button" onclick="fillThemePrompt('Resepsi malam glamor midnight navy blue dengan aksen bintang emas')" class="text-[11px] bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-full text-sky-200 transition">🌙 Midnight Gold</button>
+                            </div>
+
+                            <button id="btn-generate-ai-theme" onclick="generateAITheme()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
+                                <i data-lucide="wand-2" class="w-4 h-4"></i>
+                                <span>Rancang Tema & Kutipan dengan Gemini AI</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search & Filter Katalog Tema -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-800 text-sm sm:text-base">Katalog Tema Kurasi</h3>
+                            <span id="theme-count-label" class="text-xs text-slate-500">6 tema tersedia</span>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <div class="relative flex-1">
+                                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="theme-search-input" oninput="filterThemes()" placeholder="Cari tema (Javanese, Parisian, Sage, Terracotta)..." class="w-full pl-9 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                            <select id="theme-category-filter" onchange="filterThemes()" class="px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="all">Semua Kategori</option>
+                                <option value="traditional">Adat & Royal</option>
+                                <option value="botanical">Botanical & Alam</option>
+                                <option value="modern">Modern & Minimalis</option>
+                                <option value="romantic">Romantis & Glamor</option>
+                            </select>
+                        </div>
+
+                        <div id="theme-catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"></div>
+                    </div>
+
+                    <!-- Manual Color Fine-Tuning -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Kustomisasi Warna Manual</h4>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs text-slate-600 mb-1">Latar Belakang</label>
+                                <input type="color" id="color-bg" onchange="updateCustomColors()" class="w-full h-9 rounded-lg cursor-pointer border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-600 mb-1">Aksen Utama</label>
+                                <input type="color" id="color-primary" onchange="updateCustomColors()" class="w-full h-9 rounded-lg cursor-pointer border border-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-600 mb-1">Judul & Teks</label>
+                                <input type="color" id="color-secondary" onchange="updateCustomColors()" class="w-full h-9 rounded-lg cursor-pointer border border-slate-300">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 2: AI PREWEDDING PHOTO STUDIO ==================== -->
+                <section id="tab-ai-studio" class="tab-content hidden space-y-5">
+                    <div class="rounded-2xl bg-gradient-to-r from-rose-50 via-amber-50 to-orange-50 border border-rose-200/80 p-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="font-serif font-bold text-base sm:text-lg text-slate-900">AI Prewedding Photo Studio</h2>
+                                <p class="text-xs text-slate-600 leading-relaxed mt-0.5">
+                                    Unggah foto mentahan pasangan berlatar merah/biru atau selfie biasa, pilih konsep studio, dan biarkan <strong>Gemini AI</strong> menyulapnya menjadi foto studio profesional!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Upload Raw Photo -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">1. Unggah Foto Mentahan Pasangan (Latar Merah / Kasual)</label>
+                        <div class="relative border-2 border-dashed border-slate-300 hover:border-rose-400 rounded-2xl p-4 text-center bg-slate-50/70 transition cursor-pointer" onclick="document.getElementById('studio-raw-upload').click()">
+                            <input type="file" id="studio-raw-upload" accept="image/*" class="hidden" onchange="handleRawStudioUpload(event)">
+                            
+                            <div id="studio-upload-placeholder" class="py-4 space-y-2">
+                                <div class="w-12 h-12 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+                                    <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                                </div>
+                                <p class="text-xs sm:text-sm font-semibold text-slate-700">Klik untuk pilih foto dari galeri HP / Laptop</p>
+                                <p class="text-[11px] text-slate-500">Mendukung JPG, PNG, WEBP (Pas foto latar merah/biru atau foto berdua)</p>
+                            </div>
+
+                            <div id="studio-raw-preview-wrap" class="hidden flex flex-col sm:flex-row items-center gap-4 text-left">
+                                <img id="studio-raw-preview" src="" alt="Foto Mentah" class="w-28 h-32 object-cover rounded-xl border-2 border-white shadow-md">
+                                <div class="flex-1 space-y-1">
+                                    <span class="inline-block text-[11px] font-semibold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-md">Foto Mentah Siap Diproses</span>
+                                    <p class="text-xs text-slate-600">AI mempertahankan kemiripan wajah pasangan sambil mengganti latar belakang, pencahayaan, dan busana sesuai tema studio.</p>
+                                    <span class="inline-block text-xs text-rose-600 font-semibold hover:underline">Ganti foto lain</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Select Studio Preset -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">2. Pilih Konsep Latar Studio AI</label>
+                        <div id="studio-presets-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
+                    </div>
+
+                    <!-- Step 3: Custom Detail & Canvas Studio Lighting -->
+                    <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Detail Tambahan (Opsional)</label>
+                            <input type="text" id="studio-custom-detail" placeholder="Misal: Memakai jas hitam elegan dan kebaya modern putih mutiara..." class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2 pt-1">
+                            <div>
+                                <label class="block text-[11px] text-slate-500 mb-1">Tone Pencahayaan</label>
+                                <select id="studio-tone-filter" onchange="applyCanvasStudioFilter()" class="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded-lg">
+                                    <option value="natural">Studio Natural</option>
+                                    <option value="warm-gold">Warm Golden Hour</option>
+                                    <option value="editorial-bw">Vogue B&W Klasik</option>
+                                    <option value="soft-pastel">Soft Romantic Glow</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-500 mb-1">Kecerahan (<span id="val-brightness">105</span>%)</label>
+                                <input type="range" id="studio-brightness" min="80" max="135" value="105" oninput="applyCanvasStudioFilter()" class="w-full accent-rose-600">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-500 mb-1">Kontras (<span id="val-contrast">108</span>%)</label>
+                                <input type="range" id="studio-contrast" min="85" max="140" value="108" oninput="applyCanvasStudioFilter()" class="w-full accent-rose-600">
+                            </div>
+                        </div>
+
+                        <button id="btn-generate-studio-photo" onclick="generateAIPreweddingPhoto()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
+                            <i data-lucide="wand-2" class="w-4 h-4"></i>
+                            <span>Sulap Jadi Foto Studio Profesional (Gemini AI)</span>
+                        </button>
+                    </div>
+
+                    <!-- Step 4: Studio Result -->
+                    <div id="studio-result-container" class="hidden rounded-2xl border-2 border-amber-400/60 bg-slate-900 text-white p-4 space-y-4 shadow-xl">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                                <i data-lucide="star" class="w-3.5 h-3.5"></i> Hasil AI Prewedding Studio
+                            </span>
+                            <span id="studio-result-badge" class="text-[11px] bg-white/10 px-2.5 py-0.5 rounded-full text-slate-300">Studio HD</span>
+                        </div>
+
+                        <div class="relative rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center min-h-[240px]">
+                            <img id="studio-result-img" src="" alt="Hasil AI Studio" class="max-h-[360px] w-auto object-contain rounded-lg shadow-2xl">
+                            <canvas id="studio-hidden-canvas" class="hidden"></canvas>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <button onclick="applyStudioPhotoTo('cover')" class="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                                <i data-lucide="image" class="w-3.5 h-3.5"></i> Pasang di Sampul
+                            </button>
+                            <button onclick="applyStudioPhotoTo('gallery')" class="py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                                <i data-lucide="images" class="w-3.5 h-3.5"></i> Tambah ke Galeri
+                            </button>
+                            <button onclick="downloadStudioPhoto()" class="py-2.5 px-3 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Unduh Foto
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 3: DATA MEMPELAI & LOVE STORY ==================== -->
+                <section id="tab-couple" class="tab-content hidden space-y-5">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-sm text-slate-800">Judul & Kutipan Pembuka</h3>
+                        <div>
+                            <label class="block text-xs text-slate-600 mb-1">Judul Acara di Sampul</label>
+                            <input type="text" id="inp-header-title" oninput="syncFormToState()" class="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-600 mb-1">Kutipan / Ayat / Puisi Pernikahan</label>
+                            <textarea id="inp-quote" rows="3" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Mempelai Pria -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-slate-800">Mempelai Pria</h3>
+                            <label class="cursor-pointer text-xs font-semibold text-amber-700 hover:underline">
+                                <i class="fa-solid fa-camera mr-1"></i> Ganti Foto
+                                <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event, 'groom')">
+                            </label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img id="preview-groom-avatar" src="" alt="Pria" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400">
+                            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <input type="text" id="inp-groom-nick" placeholder="Nama Panggilan" oninput="syncFormToState()" class="px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                                <input type="text" id="inp-groom-full" placeholder="Nama Lengkap & Gelar" oninput="syncFormToState()" class="px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            </div>
+                        </div>
+                        <input type="text" id="inp-groom-parents" placeholder="Putra dari Bapak ... & Ibu ..." oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                    </div>
+
+                    <!-- Mempelai Wanita -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-slate-800">Mempelai Wanita</h3>
+                            <label class="cursor-pointer text-xs font-semibold text-amber-700 hover:underline">
+                                <i class="fa-solid fa-camera mr-1"></i> Ganti Foto
+                                <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event, 'bride')">
+                            </label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <img id="preview-bride-avatar" src="" alt="Wanita" class="w-14 h-14 rounded-full object-cover border-2 border-amber-400">
+                            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <input type="text" id="inp-bride-nick" placeholder="Nama Panggilan" oninput="syncFormToState()" class="px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                                <input type="text" id="inp-bride-full" placeholder="Nama Lengkap & Gelar" oninput="syncFormToState()" class="px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            </div>
+                        </div>
+                        <input type="text" id="inp-bride-parents" placeholder="Putri dari Bapak ... & Ibu ..." oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <h3 class="font-bold text-sm text-slate-800">Kisah Cinta Singkat (Love Story)</h3>
+                        <textarea id="inp-love-story" rows="3" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl"></textarea>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 4: ACARA & AMPLOP DIGITAL ==================== -->
+                <section id="tab-event" class="tab-content hidden space-y-5">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-sm text-slate-800">Akad Nikah / Pemberkatan</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs text-slate-600 mb-1">Tanggal Utama (Countdown)</label>
+                                <input type="date" id="inp-akad-date" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-600 mb-1">Waktu Akad</label>
+                                <input type="text" id="inp-akad-time" placeholder="08.00 - 10.00 WIB" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            </div>
+                        </div>
+                        <input type="text" id="inp-akad-venue" placeholder="Nama Masjid / Gedung Akad" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-sm text-slate-800">Resepsi Pernikahan</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-xs text-slate-600 mb-1">Tanggal Resepsi</label>
+                                <input type="date" id="inp-resepsi-date" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-600 mb-1">Waktu Resepsi</label>
+                                <input type="text" id="inp-resepsi-time" placeholder="11.00 - 14.00 WIB" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            </div>
+                        </div>
+                        <input type="text" id="inp-resepsi-venue" placeholder="Nama Ballroom / Gedung Resepsi" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                        <textarea id="inp-address" rows="2" placeholder="Alamat lengkap lokasi acara..." oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl"></textarea>
+                        <input type="url" id="inp-maps-url" placeholder="Link Google Maps (https://maps.google.com/...)" oninput="syncFormToState()" class="w-full px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <h3 class="font-bold text-sm text-slate-800">Amplop Digital / Wedding Gift</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <input type="text" id="inp-bank-name" placeholder="Nama Bank (BCA/Mandiri)" oninput="syncFormToState()" class="px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            <input type="text" id="inp-bank-number" placeholder="No. Rekening" oninput="syncFormToState()" class="px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                            <input type="text" id="inp-bank-holder" placeholder="Atas Nama" oninput="syncFormToState()" class="px-3 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 5: MUSIK KUSTOM & GALERI FOTO ==================== -->
+                <section id="tab-media" class="tab-content hidden space-y-5">
+                    <div class="p-4 rounded-2xl bg-slate-900 text-white space-y-4 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-sm sm:text-base text-amber-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-compact-disc fa-spin"></i> Musik Latar Undangan
+                                </h3>
+                                <p class="text-xs text-slate-400">Pilih instrumen romantis bawaan atau unggah lagu MP3 sendiri.</p>
+                            </div>
+                            <button onclick="toggleMusicPlayback()" id="btn-editor-play-music" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-play"></i> <span>Putar</span>
+                            </button>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-xs text-slate-300">Pilih Instrumen Bawaan:</label>
+                            <select id="inp-music-preset" onchange="selectMusicPreset(this.value)" class="w-full px-3 py-2.5 text-xs sm:text-sm bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                <option value="canon">🎹 Romantic Piano — Canon in D Serenity</option>
+                                <option value="starlight">✨ Music Box — Starlight Waltz</option>
+                                <option value="royal">🎻 Royal Harp — Golden Vow</option>
+                                <option value="custom" id="opt-custom-music" disabled>🎵 Lagu Unggahan Sendiri (Belum diunggah)</option>
+                            </select>
+                        </div>
+
+                        <div class="pt-1">
+                            <label class="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border-2 border-dashed border-amber-400/50 hover:border-amber-400 bg-white/5 hover:bg-white/10 cursor-pointer transition text-xs sm:text-sm font-semibold text-amber-200">
+                                <i class="fa-solid fa-file-audio text-base"></i>
+                                <span id="custom-audio-label">Unggah File Musik Sendiri (.MP3 / .WAV / .M4A)</span>
+                                <input type="file" accept="audio/*" class="hidden" onchange="handleCustomAudioUpload(event)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-sm text-slate-800">Foto Sampul Utama (Hero Cover)</h3>
+                            <label class="cursor-pointer bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition">
+                                <i class="fa-solid fa-upload mr-1"></i> Unggah Sampul
+                                <input type="file" accept="image/*" class="hidden" onchange="handleCoverUpload(event)">
+                            </label>
+                        </div>
+                        <img id="editor-cover-thumb" src="" alt="Sampul" class="w-full h-40 object-cover rounded-xl border border-slate-200">
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">Galeri Momen Prewedding</h3>
+                                <p class="text-[11px] text-slate-500">Bisa unggah banyak foto sekaligus atau ambil dari AI Photo Studio.</p>
+                            </div>
+                            <label class="cursor-pointer bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition">
+                                <i class="fa-solid fa-plus mr-1"></i> Tambah Foto
+                                <input type="file" accept="image/*" multiple class="hidden" onchange="handleGalleryMultiUpload(event)">
+                            </label>
+                        </div>
+                        <div id="editor-gallery-grid" class="grid grid-cols-3 gap-2"></div>
+                    </div>
+                </section>
+
+            </div>
+        </aside>
+
+        <!-- ==================== RIGHT PANEL: LIVE INTERACTIVE WEDDING INVITATION ==================== -->
+        <section id="preview-panel" class="w-full lg:w-[52%] xl:w-[55%] bg-slate-200/80 flex flex-col items-center justify-start p-0 sm:p-4 lg:p-6 overflow-y-auto">
+            
+            <div id="preview-toolbar" class="w-full max-w-[480px] mb-3 px-3 sm:px-0 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-semibold text-slate-700">Live Pratinjau Undangan</span>
+                </div>
+                <button onclick="reopenEnvelopeCover()" class="bg-white hover:bg-slate-50 text-slate-700 font-medium px-3 py-1.5 rounded-full shadow-sm border border-slate-200 transition">
+                    <i class="fa-solid fa-envelope mr-1 text-amber-600"></i> Uji Sampul Depan
+                </button>
+            </div>
+
+            <!-- ==================== INVITATION FRAME ==================== -->
+            <div id="invitation-container" class="inv-theme-wrapper relative w-full max-w-[480px] min-h-[820px] sm:rounded-[2.2rem] shadow-2xl overflow-hidden border border-slate-300/60">
+                
+                <!-- FLOATING VINYL MUSIC PLAYER -->
+                <button onclick="toggleMusicPlayback()" id="floating-vinyl-btn" title="Putar / Jeda Musik" class="fixed sm:absolute bottom-5 right-5 z-40 w-12 h-12 rounded-full vinyl-disc flex items-center justify-center text-amber-300 border-2 border-amber-400/50 transition transform hover:scale-105">
+                    <div id="vinyl-spinner" class="w-full h-full rounded-full flex items-center justify-center">
+                        <div class="w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center text-[8px] text-slate-950">
+                            <i id="vinyl-icon" class="fa-solid fa-music"></i>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- 1. OPENING ENVELOPE COVER CURTAIN -->
+                <div id="invitation-cover-curtain" class="cover-curtain absolute inset-0 z-30 flex flex-col justify-between items-center text-center p-8 bg-slate-950 text-white">
+                    <img id="live-cover-bg" src="" alt="Cover" class="absolute inset-0 w-full h-full object-cover opacity-55 scale-105 transition-transform duration-1000">
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85"></div>
+
+                    <div class="relative z-10 pt-6 space-y-2">
+                        <p id="live-cover-subtitle" class="text-xs uppercase tracking-[0.3em] text-amber-300/90 font-medium">The Wedding Of</p>
+                        <h2 id="live-cover-names" class="font-serif text-4xl sm:text-5xl font-bold tracking-wide text-white drop-shadow-md">Raka & Nadira</h2>
+                        <p id="live-cover-date" class="text-xs sm:text-sm tracking-widest text-slate-200 pt-1">Minggu, 20 Desember 2026</p>
+                    </div>
+
+                    <div class="relative z-10 w-full max-w-xs space-y-4 pb-6">
+                        <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 space-y-1">
+                            <p class="text-[11px] uppercase tracking-widest text-amber-200/80">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+                            <p id="live-guest-name" class="font-serif text-lg sm:text-xl font-semibold text-white">Tamu Undangan Spesial</p>
+                            <p class="text-[11px] text-slate-300">Mohon maaf apabila ada kesalahan penulisan nama & gelar</p>
+                        </div>
+
+                        <button onclick="openInvitationEnvelope()" class="w-full py-3.5 px-6 rounded-full inv-accent-bg font-semibold text-sm tracking-wide shadow-xl hover:brightness-110 transition transform active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                            <span>Buka Undangan</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. MAIN INVITATION BODY -->
+                <div id="invitation-body" class="relative z-10 pb-20">
+                    <!-- Hero Section -->
+                    <div class="relative h-[460px] flex flex-col justify-end text-center p-6 overflow-hidden">
+                        <img id="live-hero-img" src="" alt="Hero" class="absolute inset-0 w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[var(--inv-bg)] via-black/35 to-black/30"></div>
+                        
+                        <div class="relative z-10 space-y-2 pb-4">
+                            <span id="live-theme-badge" class="inline-block text-[10px] uppercase tracking-[0.25em] px-3 py-1 rounded-full bg-black/40 text-amber-200 backdrop-blur-sm border border-white/15">
+                                We Are Getting Married
+                            </span>
+                            <h1 id="live-hero-names" class="inv-heading text-4xl sm:text-5xl font-bold drop-shadow-sm">Raka & Nadira</h1>
+                            <p id="live-hero-date" class="text-xs sm:text-sm font-medium tracking-widest uppercase inv-accent-text">20 . 12 . 2026</p>
+                        </div>
+                    </div>
+
+                    <!-- Quote -->
+                    <div class="px-6 py-8 text-center space-y-4">
+                        <div class="w-12 h-0.5 mx-auto inv-accent-bg opacity-60"></div>
+                        <p id="live-quote" class="font-cormorant italic text-lg sm:text-xl leading-relaxed px-2"></p>
+                        <div class="w-12 h-0.5 mx-auto inv-accent-bg opacity-60"></div>
+                    </div>
+
+                    <!-- Couple Profile -->
+                    <div class="px-6 py-6 space-y-8">
+                        <div class="text-center space-y-1">
+                            <p class="text-xs uppercase tracking-[0.2em] inv-accent-text font-semibold">Assalamu'alaikum Wr. Wb.</p>
+                            <p class="text-xs opacity-80 max-w-sm mx-auto">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami:</p>
+                        </div>
+
+                        <div class="inv-surface rounded-3xl p-6 text-center shadow-sm space-y-3">
+                            <div class="w-28 h-28 mx-auto rounded-full p-1 border-2 inv-border">
+                                <img id="live-groom-img" src="" alt="Mempelai Pria" class="w-full h-full rounded-full object-cover">
+                            </div>
+                            <div>
+                                <h3 id="live-groom-full" class="inv-heading text-2xl font-bold"></h3>
+                                <p id="live-groom-parents" class="text-xs opacity-75 mt-1"></p>
+                            </div>
+                        </div>
+
+                        <div class="text-center font-serif italic text-3xl inv-accent-text">&amp;</div>
+
+                        <div class="inv-surface rounded-3xl p-6 text-center shadow-sm space-y-3">
+                            <div class="w-28 h-28 mx-auto rounded-full p-1 border-2 inv-border">
+                                <img id="live-bride-img" src="" alt="Mempelai Wanita" class="w-full h-full rounded-full object-cover">
+                            </div>
+                            <div>
+                                <h3 id="live-bride-full" class="inv-heading text-2xl font-bold"></h3>
+                                <p id="live-bride-parents" class="text-xs opacity-75 mt-1"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Love Story -->
+                    <div class="px-6 py-4">
+                        <div class="inv-surface rounded-3xl p-6 text-center space-y-3">
+                            <i class="fa-solid fa-heart inv-accent-text text-xl"></i>
+                            <h3 class="inv-heading text-xl font-bold">Kisah Cinta Kami</h3>
+                            <p id="live-love-story" class="text-xs sm:text-sm leading-relaxed opacity-85"></p>
+                        </div>
+                    </div>
+
+                    <!-- Countdown -->
+                    <div class="px-6 py-6">
+                        <div class="inv-surface rounded-3xl p-6 text-center space-y-4 shadow-sm">
+                            <p class="text-xs uppercase tracking-[0.2em] inv-accent-text font-bold">Menghitung Hari Bahagia</p>
+                            <div class="grid grid-cols-4 gap-2">
+                                <div class="p-3 rounded-2xl bg-black/5">
+                                    <span id="cd-days" class="inv-heading text-2xl font-bold block">00</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Hari</span>
+                                </div>
+                                <div class="p-3 rounded-2xl bg-black/5">
+                                    <span id="cd-hours" class="inv-heading text-2xl font-bold block">00</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Jam</span>
+                                </div>
+                                <div class="p-3 rounded-2xl bg-black/5">
+                                    <span id="cd-mins" class="inv-heading text-2xl font-bold block">00</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Menit</span>
+                                </div>
+                                <div class="p-3 rounded-2xl bg-black/5">
+                                    <span id="cd-secs" class="inv-heading text-2xl font-bold block">00</span>
+                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Detik</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Events -->
+                    <div class="px-6 py-4 space-y-4">
+                        <h2 class="inv-heading text-2xl sm:text-3xl font-bold text-center">Rangkaian Acara</h2>
+                        
+                        <div class="inv-surface rounded-3xl p-6 text-center space-y-2.5 shadow-sm">
+                            <span class="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider inv-accent-bg">Akad Nikah</span>
+                            <p id="live-akad-date" class="font-bold text-sm"></p>
+                            <p id="live-akad-time" class="text-xs inv-accent-text font-semibold"></p>
+                            <p id="live-akad-venue" class="font-serif font-bold text-base pt-1"></p>
+                        </div>
+
+                        <div class="inv-surface rounded-3xl p-6 text-center space-y-2.5 shadow-sm">
+                            <span class="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider inv-accent-bg">Resepsi Pernikahan</span>
+                            <p id="live-resepsi-date" class="font-bold text-sm"></p>
+                            <p id="live-resepsi-time" class="text-xs inv-accent-text font-semibold"></p>
+                            <p id="live-resepsi-venue" class="font-serif font-bold text-base pt-1"></p>
+                            <p id="live-address" class="text-xs opacity-75 leading-relaxed"></p>
+                            
+                            <div class="pt-3">
+                                <a id="live-maps-btn" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full inv-accent-bg text-xs font-semibold shadow hover:brightness-110 transition">
+                                    <i class="fa-solid fa-location-dot"></i> Buka Google Maps
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photo Gallery -->
+                    <div class="px-6 py-6 space-y-4">
+                        <div class="text-center">
+                            <h2 class="inv-heading text-2xl sm:text-3xl font-bold">Galeri Bahagia</h2>
+                            <p class="text-xs opacity-75">Momen indah yang terabadikan</p>
+                        </div>
+                        <div id="live-gallery-grid" class="grid grid-cols-2 gap-2.5"></div>
+                    </div>
+
+                    <!-- Digital Gift -->
+                    <div class="px-6 py-4">
+                        <div class="inv-surface rounded-3xl p-6 text-center space-y-3 shadow-sm">
+                            <i class="fa-solid fa-gift text-2xl inv-accent-text"></i>
+                            <h3 class="inv-heading text-2xl font-bold">Amplop Digital</h3>
+                            <p class="text-xs opacity-75">Doa restu Anda merupakan karunia yang sangat berarti bagi kami.</p>
+                            
+                            <div class="p-4 rounded-2xl bg-black/5 border inv-border space-y-1.5">
+                                <p id="live-bank-name" class="text-xs font-bold uppercase tracking-wider inv-accent-text"></p>
+                                <p id="live-bank-number" class="font-mono text-lg font-bold tracking-wider"></p>
+                                <p id="live-bank-holder" class="text-xs opacity-80"></p>
+                                <button onclick="copyBankNumber()" class="mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full inv-accent-bg text-xs font-semibold hover:brightness-110 transition">
+                                    <i class="fa-regular fa-copy"></i> Salin No. Rekening
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RSVP & Guestbook -->
+                    <div class="px-6 py-6 space-y-4">
+                        <div class="inv-surface rounded-3xl p-6 space-y-4 shadow-sm">
+                            <div class="text-center">
+                                <h3 class="inv-heading text-2xl font-bold">Ucapan & Konfirmasi Kehadiran</h3>
+                                <p class="text-xs opacity-75">Kirimkan doa terbaik untuk kedua mempelai</p>
+                            </div>
+
+                            <form onsubmit="submitGuestRsvp(event)" class="space-y-3">
+                                <input type="text" id="rsvp-name" required placeholder="Nama Anda" class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-black/5 border inv-border focus:outline-none">
+                                <select id="rsvp-status" class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-black/5 border inv-border focus:outline-none">
+                                    <option value="Hadir">InsyaAllah Hadir</option>
+                                    <option value="Masih Ragu">Masih Ragu</option>
+                                    <option value="Berhalangan">Maaf, Berhalangan Hadir</option>
+                                </select>
+                                <textarea id="rsvp-message" required rows="3" placeholder="Tuliskan ucapan & doa restu..." class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-black/5 border inv-border focus:outline-none"></textarea>
+                                <button type="submit" class="w-full py-3 rounded-xl inv-accent-bg font-bold text-xs sm:text-sm shadow hover:brightness-110 transition">
+                                    <i class="fa-solid fa-paper-plane mr-1.5"></i> Kirim Ucapan & RSVP
+                                </button>
+                            </form>
+
+                            <div id="live-guestbook-list" class="space-y-2.5 max-h-64 overflow-y-auto pt-2 border-t inv-border"></div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <footer class="text-center px-6 pt-4 pb-6 space-y-2 opacity-80">
+                        <p class="text-xs">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.</p>
+                        <p id="live-footer-names" class="inv-heading text-xl font-bold pt-2"></p>
+                        <div class="pt-4 flex flex-col items-center justify-center gap-1.5">
+                            <img id="live-footer-custom-logo" src="" alt="Brand Logo" class="hidden h-9 max-w-[140px] object-contain rounded-lg">
+                            <p class="text-[10px]">Dibuat dengan ♥ menggunakan <span class="font-semibold">Wedding.id</span> Studio &bull; <span class="opacity-75">REEZZ 2026</span></p>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== DEVELOPER ADMIN & PAYMENT SETTINGS MODAL ==================== -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-[110] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl border border-slate-200 my-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-lg text-slate-900">Panel Admin & Pembayaran</h3>
+                        <p class="text-xs text-slate-500">Atur QRIS, rekening transfer, dan kode aktivasi klien</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 max-h-[72vh] overflow-y-auto pr-1">
+                <!-- QRIS Upload & Preview -->
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-4">
+                    <img id="admin-qris-preview" src="" alt="QRIS Preview" class="w-20 h-20 object-contain bg-white rounded-xl border border-slate-300 p-1 shrink-0">
+                    <div class="flex-1 space-y-1.5">
+                        <h4 class="text-xs font-bold text-slate-800">Gambar Kode QRIS Pembayaran</h4>
+                        <p class="text-[11px] text-slate-500">Unggah gambar QRIS merchant milik Anda agar tampil di layar kunci klien.</p>
+                        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold cursor-pointer transition">
+                            <i class="fa-solid fa-qrcode"></i> Unggah QRIS Saya
+                            <input type="file" accept="image/*" class="hidden" onchange="handleAdminQrisUpload(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Price, WhatsApp & Bank -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Harga Paket Akses</label>
+                        <input type="text" id="adm-price" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">No. WhatsApp Admin (628...)</label>
+                        <input type="text" id="adm-wa" placeholder="6281234567890" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Bank & No. Rekening Admin</label>
+                        <input type="text" id="adm-bank" placeholder="BANK BCA — 8830912456" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Atas Nama Rekening</label>
+                        <input type="text" id="adm-holder" placeholder="a.n. Admin Wedding.id" class="w-full px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl">
+                    </div>
+                </div>
+
+                <!-- Developer Key -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Developer Access Key (Password Login Developer)</label>
+                    <input type="text" id="adm-dev-key" class="w-full px-3 py-2 text-xs sm:text-sm font-mono bg-amber-50 border border-amber-300 rounded-xl">
+                </div>
+
+                <!-- 1-Click Client Activation Code Generator -->
+                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-900">Generator Kode Aktivasi Klien</span>
+                        <button type="button" onclick="generateNewClientCode()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition">
+                            + Buat Kode Baru
+                        </button>
+                    </div>
+                    <p class="text-[11px] text-emerald-700">Berikan salah satu kode di bawah ini kepada klien yang telah menyelesaikan pembayaran:</p>
+                    <div id="adm-codes-list" class="flex flex-wrap gap-1.5"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="saveAdminSettings()" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition">
+                    Simpan Pengaturan Admin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PUBLISH & SHARE LINK MODAL ==================== -->
+    <div id="publish-modal" class="hidden fixed inset-0 z-[105] bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl border border-slate-200 my-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                        <i data-lucide="globe" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-lg text-slate-900">Terbitkan & Bagikan Undangan</h3>
+                        <p class="text-xs text-slate-500">Buat link khusus tamu atau unduh file web siap hosting</p>
+                    </div>
+                </div>
+                <button onclick="closePublishModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Custom Hosting Domain Input -->
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-slate-700">Domain Hosting Online (Opsional — untuk GitHub Pages / Netlify)</label>
+                <input type="url" id="publish-domain-input" oninput="updatePublishedLink()" placeholder="Contoh: https://username.github.io/wedding-id/" class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <p class="text-[11px] text-slate-500">Kosongkan untuk memakai URL aktif saat ini, atau isi domain GitHub Pages Anda agar link WhatsApp bisa dibuka publik.</p>
+            </div>
+
+            <!-- Custom Guest Name Generator -->
+            <div class="space-y-1.5 bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200">
+                <label class="block text-xs font-bold text-slate-800">Nama Tamu Undangan (Personalisasi Sampul)</label>
+                <input type="text" id="publish-guest-input" oninput="updatePublishedLink()" placeholder="Contoh: Bpk. Budi Santoso & Keluarga" class="w-full px-3.5 py-2 text-xs sm:text-sm bg-white border border-amber-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+
+            <!-- Generated Portable URL -->
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-slate-700">Tautan Undangan Portabel (<code class="text-amber-700">#inv=...</code>):</label>
+                <div class="flex gap-2">
+                    <input type="text" id="published-url-output" readonly class="flex-1 px-3 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-xl text-slate-700 font-mono">
+                    <button onclick="copyPublishedUrl()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shrink-0 transition">
+                        <i class="fa-regular fa-copy"></i> Salin
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                <button onclick="shareToWhatsApp()" class="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
+                    <i class="fa-brands fa-whatsapp text-base"></i> Kirim ke WhatsApp
+                </button>
+                <button onclick="activatePureGuestMode()" class="py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
+                    <i data-lucide="external-link" class="w-4 h-4"></i> Buka Tampilan Tamu
+                </button>
+            </div>
+
+            <!-- Download Standalone HTML Button -->
+            <div class="pt-2 border-t border-slate-100">
+                <button onclick="downloadStandaloneHtml()" class="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow transition">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Unduh File index.html Siap Hosting</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LIGHTBOX MODAL ==================== -->
+    <div id="lightbox-modal" onclick="closeLightbox()" class="hidden fixed inset-0 z-[115] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-5 right-5 text-white text-2xl hover:text-amber-400">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="Preview" class="max-h-[88vh] max-w-[92vw] rounded-2xl shadow-2xl object-contain">
+    </div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // ==================== 1. PAYWALL & ADMIN CONFIGURATION ====================
+        const DEFAULT_ADMIN_CONFIG = {
+            devKey: 'DEV-WEDDINGID-2026',
+            price: 'Rp 99.000',
+            whatsapp: '6281234567890',
+            bankName: 'BANK BCA — 8830912456',
+            bankHolder: 'a.n. Admin Wedding.id Studio',
+            qrisImage: 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=WEDDING-ID-QRIS-OFFICIAL',
+            validClientCodes: ['WID-PRO-2026', 'WID-VIP-8899', 'LUNAS-2026']
+        };
+
+        let adminConfig = JSON.parse(JSON.stringify(DEFAULT_ADMIN_CONFIG));
+        let currentAccessRole = null; // 'developer' | 'client' | null
+        let generatedOtpCode = null;
+        let otpExpiresAt = 0;
+        let otpCountdownInterval = null;
+
+        // ==================== 2. CURATED THEMES & STUDIO PRESETS ====================
+        const CURATED_THEMES = [
+            {
+                id: 'javanese-royal',
+                name: 'Javanese Royal Gold',
+                category: 'traditional',
+                badge: 'Adat & Royal',
+                bg: '#181310',
+                surface: '#231C18',
+                primary: '#D4AF37',
+                secondary: '#F8E7B9',
+                text: '#E6DDD0',
+                border: 'rgba(212, 175, 55, 0.3)',
+                fontHeading: "'Playfair Display', serif",
+                desc: 'Kemewahan beludru gelap dengan ukiran emas klasik keraton.'
+            },
+            {
+                id: 'parisian-couture',
+                name: 'Parisian Couture Ivory',
+                category: 'modern',
+                badge: 'Couture',
+                bg: '#FAF7F2',
+                surface: '#FFFFFF',
+                primary: '#B48A3E',
+                secondary: '#2C241E',
+                text: '#3A322C',
+                border: 'rgba(180, 138, 62, 0.25)',
+                fontHeading: "'Playfair Display', serif",
+                desc: 'Putih gading abadi bergaya haute couture Paris dengan emas hangat.'
+            },
+            {
+                id: 'botanical-sage',
+                name: 'Botanical Sage Garden',
+                category: 'botanical',
+                badge: 'Botanical',
+                bg: '#F3F6F2',
+                surface: '#FFFFFF',
+                primary: '#5C7A67',
+                secondary: '#263A2E',
+                text: '#3A4A40',
+                border: 'rgba(92, 122, 103, 0.25)',
+                fontHeading: "'Cormorant Garamond', serif",
+                desc: 'Nuansa hijau daun sage segar dan putih bersih bernuansa taman.'
+            },
+            {
+                id: 'sunset-terracotta',
+                name: 'Sunset Terracotta',
+                category: 'botanical',
+                badge: 'Bohemian',
+                bg: '#FDF6F0',
+                surface: '#FFFBF7',
+                primary: '#C2593F',
+                secondary: '#4A251B',
+                text: '#5C3A2E',
+                border: 'rgba(194, 89, 63, 0.25)',
+                fontHeading: "'Playfair Display', serif",
+                desc: 'Kehangatan warna senja terakota dan krem pasir pantai.'
+            },
+            {
+                id: 'midnight-gold',
+                name: 'Midnight Gold Glamour',
+                category: 'romantic',
+                badge: 'Glamor',
+                bg: '#0B1120',
+                surface: '#162033',
+                primary: '#EAB308',
+                secondary: '#FEF9C3',
+                text: '#E2E8F0',
+                border: 'rgba(234, 179, 8, 0.28)',
+                fontHeading: "'Playfair Display', serif",
+                desc: 'Elegan malam berbintang biru dongker dengan kilau emas.'
+            },
+            {
+                id: 'minimalist-ivory',
+                name: 'Minimalist Ivory Mono',
+                category: 'modern',
+                badge: 'Minimalis',
+                bg: '#F8F8F6',
+                surface: '#FFFFFF',
+                primary: '#27272A',
+                secondary: '#09090B',
+                text: '#3F3F46',
+                border: 'rgba(39, 39, 42, 0.2)',
+                fontHeading: "'Cormorant Garamond', serif",
+                desc: 'Gaya majalah mode bersih yang modern dan artistik.'
+            }
+        ];
+
+        const STUDIO_PRESETS = [
+            {
+                id: 'european-studio',
+                name: 'Classic European Studio',
+                icon: 'fa-landmark',
+                prompt: 'Transform this couple photo into a luxury European classic indoor studio prewedding portrait. Replace the solid red/blue background with an opulent sunlit Parisian palace interior with tall arched windows, soft ivory drapery, and warm architectural molding. Dress them in refined formal wedding attire (tailored dark tuxedo and elegant ivory lace gown) while preserving their exact facial features, skin tones, and expressions. Soft cinematic Rembrandt studio lighting, shallow depth of field, 85mm f/1.4 portrait lens.'
+            },
+            {
+                id: 'sakura-garden',
+                name: 'Sakura Garden Romantis',
+                icon: 'fa-fan',
+                prompt: 'Transform this couple photo into a dreamy romantic prewedding portrait set in a blooming cherry blossom (sakura) garden during golden hour. Replace the plain background with soft-focus pink and white sakura trees, gentle falling petals, and warm golden sunlight. Keep their exact faces and likeness intact, wearing harmonious pastel modern prewedding outfits. Soft glowing rim light, fine art wedding photography.'
+            },
+            {
+                id: 'adat-nusantara',
+                name: 'Adat Nusantara Luxury',
+                icon: 'fa-crown',
+                prompt: 'Transform this couple photo into an authentic, majestic Indonesian royal prewedding studio portrait. Replace the plain red/blue background with a dark moody heritage studio backdrop featuring subtle warm golden Nusantara carving accents and soft spotlighting. Dress the couple in luxurious dark velvet Indonesian traditional wedding attire with intricate gold embroidery while strictly preserving their natural faces and likeness.'
+            },
+            {
+                id: 'vogue-bw',
+                name: 'Editorial Vogue B&W',
+                icon: 'fa-camera-retro',
+                prompt: 'Transform this couple photo into a high-fashion black and white Vogue editorial studio portrait. Replace the plain background with a minimalist textured grey architectural studio backdrop with dramatic yet flattering softbox lighting. Keep their exact facial features and expressions, dressed in sleek modern black-tie formal wear. Crisp contrast, fine film grain.'
+            },
+            {
+                id: 'golden-beach',
+                name: 'Golden Hour Beach',
+                icon: 'fa-sun',
+                prompt: 'Transform this couple photo into a breathtaking sunset beach prewedding portrait. Replace the plain studio background with a serene tropical coastline at golden hour, gentle ocean waves reflecting warm amber sunset light. Maintain their exact faces and likeness, dressed in flowing ivory linen and cream smart-casual wedding attire.'
+            }
+        ];
+
+        // ==================== 3. DEFAULT INVITATION STATE ====================
+        const DEFAULT_STATE = {
+            brandLogo: '',
+            customDomain: '',
+            themeId: 'parisian-couture',
+            colors: {
+                bg: '#FAF7F2',
+                surface: '#FFFFFF',
+                primary: '#B48A3E',
+                secondary: '#2C241E',
+                text: '#3A322C',
+                border: 'rgba(180, 138, 62, 0.25)',
+                fontHeading: "'Playfair Display', serif"
+            },
+            headerTitle: 'The Wedding Of',
+            quote: '"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya di antaramu rasa kasih dan sayang." (QS. Ar-Rum: 21)',
+            groom: {
+                nick: 'Raka',
+                full: 'Raka Pratama, S.T.',
+                parents: 'Putra Pertama dari Bapak Hendra Wijaya & Ibu Ratna Sari',
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+            },
+            bride: {
+                nick: 'Nadira',
+                full: 'Nadira Putri Maharani, S.Ars.',
+                parents: 'Putri Kedua dari Bapak Ahmad Fauzi & Ibu Siti Aminah',
+                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'
+            },
+            loveStory: 'Pertemuan pertama kami terjadi pada musim hujan tahun 2020 di sebuah ruang diskusi arsitektur. Dari obrolan singkat tentang impian membangun rumah masa depan, tumbuh keyakinan untuk membangun rumah tangga bersama dalam ikatan suci pernikahan.',
+            event: {
+                akadDate: '2026-12-20',
+                akadTime: '08.00 - 10.00 WIB',
+                akadVenue: 'Masjid Agung Al-Azhar, Kebayoran Baru',
+                resepsiDate: '2026-12-20',
+                resepsiTime: '11.00 - 14.00 WIB',
+                resepsiVenue: 'Grand Ballroom Hotel Mulia Senayan',
+                address: 'Jl. Asia Afrika No. 8, Gelora, Tanah Abang, Kota Jakarta Pusat',
+                mapsUrl: 'https://maps.google.com/?q=Hotel+Mulia+Senayan+Jakarta'
+            },
+            bank: {
+                name: 'BANK BCA',
+                number: '8830912456',
+                holder: 'Raka Pratama'
+            },
+            musicPreset: 'canon',
+            coverImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80',
+            gallery: [
+                'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80',
+                'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=600&q=80',
+                'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80',
+                'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80'
+            ],
+            guestbook: [
+                { name: 'Dimas & Ayu', status: 'Hadir', message: 'Selamat menempuh hidup baru Raka & Nadira! Semoga menjadi keluarga sakinah mawaddah warahmah.' },
+                { name: 'Keluarga Besar Bpk. Santoso', status: 'Hadir', message: 'Barakallahu lakuma wa baraka alaikuma. Lancar sampai hari H ya!' }
+            ]
+        };
+
+        let appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        let selectedStudioPreset = STUDIO_PRESETS[0].id;
+        let rawUploadedPhotoBase64 = null;
+        let rawUploadedPhotoMime = 'image/jpeg';
+        let currentStudioResultBase64 = null;
+
+        let isMusicPlaying = false;
+        let customAudioElement = null;
+        let toneLoop = null;
+        let toneSynth = null;
+
+        // ==================== 4. INITIALIZATION ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+            loadAdminConfig();
+            loadStateFromStorage();
+            syncPaywallUI();
+
+            const isGuestLink = parseUrlParameters();
+            if (!isGuestLink) {
+                checkSavedSessionUnlock();
+            }
+
+            renderBrandLogo();
+            renderThemeCatalog();
+            renderStudioPresets();
+            populateEditorForms();
+            applyThemeToInvitation();
+            renderInvitationPreview();
+            startCountdownTimer();
+        });
+
+        // ==================== 5. PAYWALL & DEVELOPER ACCESS LOGIC ====================
+        function loadAdminConfig() {
+            try {
+                const saved = localStorage.getItem('wedding_id_admin_cfg');
+                if (saved) adminConfig = { ...DEFAULT_ADMIN_CONFIG, ...JSON.parse(saved) };
+            } catch (e) {}
+        }
+
+        function saveAdminConfigToStorage() {
+            try {
+                localStorage.setItem('wedding_id_admin_cfg', JSON.stringify(adminConfig));
+            } catch (e) {}
+        }
+
+        function syncPaywallUI() {
+            document.getElementById('gate-qris-img').src = adminConfig.qrisImage;
+            document.getElementById('gate-price-display').textContent = adminConfig.price;
+            document.getElementById('gate-bank-name').textContent = adminConfig.bankName;
+            document.getElementById('gate-bank-holder').textContent = adminConfig.bankHolder;
+            const waInp = document.getElementById('otp-admin-wa-input');
+            if (waInp && !waInp.dataset.userEdited) {
+                waInp.value = adminConfig.whatsapp;
+            }
+        }
+
+        function sanitizeWaNumber(raw) {
+            let digits = String(raw || '').replace(/\D/g, '');
+            if (digits.startsWith('0')) digits = '62' + digits.slice(1);
+            return digits || '6281234567890';
+        }
+
+        function generateAdminOtp() {
+            const waInput = document.getElementById('otp-admin-wa-input');
+            const targetWa = sanitizeWaNumber(waInput ? waInput.value : adminConfig.whatsapp);
+            if (waInput) {
+                waInput.value = targetWa;
+                waInput.dataset.userEdited = 'true';
+            }
+            adminConfig.whatsapp = targetWa;
+            saveAdminConfigToStorage();
+
+            generatedOtpCode = String(Math.floor(100000 + Math.random() * 900000));
+            otpExpiresAt = Date.now() + 5 * 60 * 1000;
+
+            const box = document.getElementById('otp-sim-box');
+            const codeEl = document.getElementById('otp-sim-code');
+            const waTargetEl = document.getElementById('otp-sim-wa-target');
+            const waLinkBtn = document.getElementById('otp-open-wa-btn');
+
+            if (codeEl) codeEl.textContent = generatedOtpCode;
+            if (waTargetEl) waTargetEl.textContent = targetWa;
+            if (box) box.classList.remove('hidden');
+
+            const waMsg = `Kode OTP Login Developer *Wedding.id* ke nomor *${targetWa}* adalah: *${generatedOtpCode}* (berlaku 5 menit).`;
+            if (waLinkBtn) {
+                waLinkBtn.href = `https://wa.me/${targetWa}?text=${encodeURIComponent(waMsg)}`;
+            }
+
+            if (otpCountdownInterval) clearInterval(otpCountdownInterval);
+            const updateTimer = () => {
+                const remainSec = Math.max(0, Math.floor((otpExpiresAt - Date.now()) / 1000));
+                const timerEl = document.getElementById('otp-sim-timer');
+                const mm = String(Math.floor(remainSec / 60)).padStart(2, '0');
+                const ss = String(remainSec % 60).padStart(2, '0');
+                if (timerEl) timerEl.textContent = `${mm}:${ss}`;
+                if (remainSec <= 0) {
+                    generatedOtpCode = null;
+                    clearInterval(otpCountdownInterval);
+                }
+            };
+            updateTimer();
+            otpCountdownInterval = setInterval(updateTimer, 1000);
+            showToast(`Kode OTP simulasi (${generatedOtpCode}) dibuat untuk WA ${targetWa}.`, 'success');
+        }
+
+        function fillSimulatedOtp() {
+            if (!generatedOtpCode || Date.now() > otpExpiresAt) {
+                showToast('Klik "Kirim / Buat Kode OTP" terlebih dahulu.', 'warning');
+                return;
+            }
+            const inp = document.getElementById('otp-code-input');
+            if (inp) inp.value = generatedOtpCode;
+        }
+
+        function verifyDeveloperOtp(event) {
+            event.preventDefault();
+            const entered = (document.getElementById('otp-code-input')?.value || '').trim();
+            if (!generatedOtpCode || Date.now() > otpExpiresAt) {
+                showToast('Kode OTP sudah kedaluwarsa atau belum dibuat. Silakan buat kode OTP baru.', 'error');
+                return;
+            }
+            if (entered === generatedOtpCode) {
+                generatedOtpCode = null;
+                if (otpCountdownInterval) clearInterval(otpCountdownInterval);
+                unlockStudio('developer', true);
+            } else {
+                showToast('Kode OTP tidak sesuai! Periksa kembali kode OTP yang dibuat.', 'error');
+            }
+        }
+
+        function switchGateTab(tab) {
+            const clientTab = document.getElementById('gate-tab-client');
+            const devTab = document.getElementById('gate-tab-dev');
+            const clientContent = document.getElementById('gate-content-client');
+            const devContent = document.getElementById('gate-content-dev');
+
+            if (tab === 'client') {
+                clientTab.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition bg-amber-500 text-slate-950 shadow flex items-center justify-center gap-2';
+                devTab.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-400 hover:text-white flex items-center justify-center gap-2';
+                clientContent.classList.remove('hidden');
+                devContent.classList.add('hidden');
+            } else {
+                devTab.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition bg-amber-500 text-slate-950 shadow flex items-center justify-center gap-2';
+                clientTab.className = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-400 hover:text-white flex items-center justify-center gap-2';
+                devContent.classList.remove('hidden');
+                clientContent.classList.add('hidden');
+            }
+        }
+
+        function checkSavedSessionUnlock() {
+            const savedRole = sessionStorage.getItem('wedding_id_unlocked_role');
+            if (savedRole === 'developer' || savedRole === 'client') {
+                unlockStudio(savedRole, false);
+            }
+        }
+
+        function verifyClientActivationCode(event) {
+            event.preventDefault();
+            const code = document.getElementById('client-activation-input').value.trim().toUpperCase();
+            if (adminConfig.validClientCodes.includes(code)) {
+                unlockStudio('client', true);
+            } else {
+                showToast('Kode aktivasi tidak valid. Silakan selesaikan pembayaran QRIS/Transfer.', 'error');
+            }
+        }
+
+        function verifyDeveloperLogin(event) {
+            event.preventDefault();
+            const key = document.getElementById('dev-key-input').value.trim();
+            if (key === adminConfig.devKey) {
+                unlockStudio('developer', true);
+            } else {
+                showToast('Developer Access Key salah!', 'error');
+            }
+        }
+
+        function unlockStudio(role, notify = true) {
+            currentAccessRole = role;
+            sessionStorage.setItem('wedding_id_unlocked_role', role);
+            document.getElementById('paywall-gate').classList.add('hidden');
+
+            const roleBadge = document.getElementById('role-badge');
+            const adminBtn = document.getElementById('btn-admin-panel');
+
+            if (role === 'developer') {
+                roleBadge.textContent = 'Developer';
+                roleBadge.classList.remove('hidden');
+                adminBtn.classList.remove('hidden');
+                adminBtn.classList.add('inline-flex');
+                if (notify) showToast('Selamat datang kembali, Developer Wedding.id!', 'success');
+            } else {
+                roleBadge.textContent = 'Klien Pro';
+                roleBadge.classList.remove('hidden');
+                adminBtn.classList.add('hidden');
+                adminBtn.classList.remove('inline-flex');
+                if (notify) showToast('Lisensi klien berhasil diaktifkan! Selamat berkreasi.', 'success');
+            }
+        }
+
+        function lockStudioAgain() {
+            sessionStorage.removeItem('wedding_id_unlocked_role');
+            currentAccessRole = null;
+            document.getElementById('paywall-gate').classList.remove('hidden');
+            showToast('Studio dikunci kembali.', 'info');
+        }
+
+        function confirmPaymentWhatsApp() {
+            const text = `Halo Admin Wedding.id, saya sudah melakukan pembayaran sebesar *${adminConfig.price}* via QRIS/Transfer. Mohon kirimkan *Kode Aktivasi Klien* untuk membuka studio undangan digital. Terima kasih!`;
+            window.open(`https://wa.me/${adminConfig.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+        }
+
+        // ==================== 6. DEVELOPER ADMIN MODAL ====================
+        function openAdminModal() {
+            document.getElementById('admin-qris-preview').src = adminConfig.qrisImage;
+            document.getElementById('adm-price').value = adminConfig.price;
+            document.getElementById('adm-wa').value = adminConfig.whatsapp;
+            document.getElementById('adm-bank').value = adminConfig.bankName;
+            document.getElementById('adm-holder').value = adminConfig.bankHolder;
+            document.getElementById('adm-dev-key').value = adminConfig.devKey;
+            renderAdminCodesList();
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function handleAdminQrisUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                adminConfig.qrisImage = e.target.result;
+                document.getElementById('admin-qris-preview').src = e.target.result;
+                syncPaywallUI();
+                saveAdminConfigToStorage();
+                showToast('Gambar QRIS berhasil diperbarui!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function generateNewClientCode() {
+            const rand = Math.floor(1000 + Math.random() * 9000);
+            const newCode = `WID-PRO-${rand}`;
+            adminConfig.validClientCodes.unshift(newCode);
+            saveAdminConfigToStorage();
+            renderAdminCodesList();
+            copyToClipboard(newCode, `Kode baru ${newCode} dibuat & disalin!`);
+        }
+
+        function renderAdminCodesList() {
+            const wrap = document.getElementById('adm-codes-list');
+            wrap.innerHTML = adminConfig.validClientCodes.map(code => `
+                <button type="button" onclick="copyToClipboard('${code}', 'Kode ${code} disalin!')" class="px-2.5 py-1 rounded-lg bg-white border border-emerald-300 text-emerald-900 font-mono text-xs font-bold hover:bg-emerald-100 transition flex items-center gap-1.5">
+                    <span>${code}</span>
+                    <i class="fa-regular fa-copy text-[10px]"></i>
+                </button>
+            `).join('');
+        }
+
+        function saveAdminSettings() {
+            adminConfig.price = document.getElementById('adm-price').value.trim() || 'Rp 99.000';
+            adminConfig.whatsapp = document.getElementById('adm-wa').value.trim() || '6281234567890';
+            adminConfig.bankName = document.getElementById('adm-bank').value.trim();
+            adminConfig.bankHolder = document.getElementById('adm-holder').value.trim();
+            const newDevKey = document.getElementById('adm-dev-key').value.trim();
+            if (newDevKey) adminConfig.devKey = newDevKey;
+
+            saveAdminConfigToStorage();
+            syncPaywallUI();
+            closeAdminModal();
+            showToast('Pengaturan Admin & Pembayaran berhasil disimpan!', 'success');
+        }
+
+        // ==================== 7. PORTABLE HASH LINK & URL PARSER ====================
+        function parseUrlParameters() {
+            const params = new URLSearchParams(window.location.search);
+            const hashStr = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : '';
+            const hashParams = new URLSearchParams(hashStr);
+
+            const guestTo = params.get('to') || hashParams.get('to');
+            const encodedInv = hashParams.get('inv') || params.get('data');
+            const viewMode = params.get('mode') || (encodedInv ? 'guest' : null);
+
+            if (encodedInv) {
+                try {
+                    const decoded = JSON.parse(decodeURIComponent(escape(atob(encodedInv))));
+                    if (decoded.headerTitle) appState.headerTitle = decoded.headerTitle;
+                    if (decoded.quote) appState.quote = decoded.quote;
+                    if (decoded.groom) appState.groom = { ...appState.groom, ...decoded.groom };
+                    if (decoded.bride) appState.bride = { ...appState.bride, ...decoded.bride };
+                    if (decoded.loveStory) appState.loveStory = decoded.loveStory;
+                    if (decoded.event) appState.event = { ...appState.event, ...decoded.event };
+                    if (decoded.bank) appState.bank = { ...appState.bank, ...decoded.bank };
+                    if (decoded.colors) appState.colors = { ...appState.colors, ...decoded.colors };
+                    if (decoded.themeId) appState.themeId = decoded.themeId;
+                    if (decoded.coverImage) appState.coverImage = decoded.coverImage;
+                    if (decoded.brandLogo) appState.brandLogo = decoded.brandLogo;
+                } catch (e) {
+                    console.warn('Gagal mem-parsing data undangan dari URL:', e);
+                }
+            }
+
+            if (guestTo) {
+                document.getElementById('live-guest-name').textContent = guestTo;
+                document.getElementById('rsvp-name').value = guestTo;
+            }
+
+            if (viewMode === 'guest' || guestTo) {
+                // Tamu undangan langsung melewati paywall
+                document.getElementById('paywall-gate').classList.add('hidden');
+                activatePureGuestMode(false);
+                return true;
+            }
+            return false;
+        }
+
+        function updatePublishedLink() {
+            const guestName = document.getElementById('publish-guest-input').value.trim();
+            const customDomain = document.getElementById('publish-domain-input').value.trim();
+            appState.customDomain = customDomain;
+            saveStateToStorage();
+
+            const baseUrl = customDomain ? customDomain.split('#')[0].split('?')[0] : window.location.href.split('#')[0].split('?')[0];
+
+            // Kemas data undangan portabel ke dalam URL hash (#inv=...)
+            const portablePayload = {
+                headerTitle: appState.headerTitle,
+                quote: appState.quote,
+                groom: {
+                    nick: appState.groom.nick,
+                    full: appState.groom.full,
+                    parents: appState.groom.parents,
+                    avatar: appState.groom.avatar.startsWith('http') ? appState.groom.avatar : ''
+                },
+                bride: {
+                    nick: appState.bride.nick,
+                    full: appState.bride.full,
+                    parents: appState.bride.parents,
+                    avatar: appState.bride.avatar.startsWith('http') ? appState.bride.avatar : ''
+                },
+                loveStory: appState.loveStory,
+                event: appState.event,
+                bank: appState.bank,
+                themeId: appState.themeId,
+                colors: appState.colors,
+                coverImage: appState.coverImage.startsWith('http') ? appState.coverImage : '',
+                brandLogo: appState.brandLogo && appState.brandLogo.length < 15000 ? appState.brandLogo : ''
+            };
+
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(portablePayload))));
+            const hashParams = new URLSearchParams();
+            hashParams.set('inv', encoded);
+
+            if (guestName) {
+                hashParams.set('to', guestName);
+                document.getElementById('live-guest-name').textContent = guestName;
+            } else {
+                document.getElementById('live-guest-name').textContent = 'Tamu Undangan Spesial';
+            }
+
+            const fullLink = `${baseUrl}#${hashParams.toString()}`;
+            document.getElementById('published-url-output').value = fullLink;
+        }
+
+        function downloadStandaloneHtml() {
+            const docClone = document.documentElement.cloneNode(true);
+            // Pastikan gate dalam keadaan tertutup saat diunduh untuk publik
+            const gate = docClone.querySelector('#paywall-gate');
+            if (gate) gate.classList.remove('hidden');
+
+            const htmlContent = '<!DOCTYPE html>\n' + docClone.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('File index.html berhasil diunduh dan siap di-upload ke GitHub Pages / Netlify!', 'success');
+        }
+
+        // ==================== 8. BRAND LOGO & STATE STORAGE ====================
+        function handleBrandLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                appState.brandLogo = e.target.result;
+                renderBrandLogo();
+                saveStateToStorage();
+                showToast('Logo brand Wedding.id berhasil diperbarui!', 'success');
+            };
+            reader.readAsDataURL(file);
+            event.target.value = '';
+        }
+
+        function resetBrandLogo() {
+            appState.brandLogo = '';
+            renderBrandLogo();
+            saveStateToStorage();
+            showToast('Logo dikembalikan ke default Wedding.id.', 'info');
+        }
+
+        function renderBrandLogo() {
+            const hasLogo = Boolean(appState.brandLogo);
+            const navDefault = document.getElementById('navbar-default-logo');
+            const navCustom = document.getElementById('navbar-custom-logo');
+            const editorDefault = document.getElementById('editor-default-logo');
+            const editorCustom = document.getElementById('editor-custom-logo');
+            const footerCustom = document.getElementById('live-footer-custom-logo');
+            const resetBtn = document.getElementById('btn-reset-logo');
+
+            if (hasLogo) {
+                navDefault.classList.add('hidden');
+                navCustom.src = appState.brandLogo;
+                navCustom.classList.remove('hidden');
+                editorDefault.classList.add('hidden');
+                editorCustom.src = appState.brandLogo;
+                editorCustom.classList.remove('hidden');
+                footerCustom.src = appState.brandLogo;
+                footerCustom.classList.remove('hidden');
+                resetBtn.classList.remove('hidden');
+            } else {
+                navDefault.classList.remove('hidden');
+                navCustom.classList.add('hidden');
+                editorDefault.classList.remove('hidden');
+                editorCustom.classList.add('hidden');
+                footerCustom.classList.add('hidden');
+                resetBtn.classList.add('hidden');
+            }
+        }
+
+        function loadStateFromStorage() {
+            try {
+                const saved = localStorage.getItem('wedding_id_project_v2');
+                if (saved) appState = { ...DEFAULT_STATE, ...JSON.parse(saved) };
+            } catch (e) {}
+        }
+
+        function saveStateToStorage() {
+            try {
+                localStorage.setItem('wedding_id_project_v2', JSON.stringify(appState));
+            } catch (e) {}
+        }
+
+        // ==================== 9. WORKSPACE TABS & VIEW MODES ====================
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.editor-tab').forEach(btn => {
+                btn.classList.remove('border-amber-600', 'text-amber-700', 'bg-white', 'font-semibold');
+                btn.classList.add('border-transparent', 'text-slate-600', 'font-medium');
+            });
+
+            const activeBtn = document.querySelector(`.editor-tab[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('border-amber-600', 'text-amber-700', 'bg-white', 'font-semibold');
+                activeBtn.classList.remove('border-transparent', 'text-slate-600', 'font-medium');
+            }
+        }
+
+        function setWorkspaceMode(mode) {
+            const editorPanel = document.getElementById('editor-panel');
+            const previewPanel = document.getElementById('preview-panel');
+            const btnSplit = document.getElementById('btn-mode-split');
+            const btnEditor = document.getElementById('btn-mode-editor');
+            const btnPreview = document.getElementById('btn-mode-preview');
+
+            [btnSplit, btnEditor, btnPreview].forEach(b => {
+                if (b) {
+                    b.classList.remove('bg-amber-500', 'text-slate-950', 'shadow');
+                    b.classList.add('text-slate-300');
+                }
+            });
+
+            if (mode === 'split') {
+                editorPanel.classList.remove('hidden');
+                previewPanel.classList.remove('hidden');
+                editorPanel.className = 'w-full lg:w-[48%] xl:w-[45%] bg-white border-r border-slate-200 flex flex-col lg:h-[calc(100vh-4rem)] lg:sticky lg:top-16';
+                previewPanel.className = 'w-full lg:w-[52%] xl:w-[55%] bg-slate-200/80 flex flex-col items-center justify-start p-0 sm:p-4 lg:p-6 overflow-y-auto';
+                btnSplit.classList.add('bg-amber-500', 'text-slate-950', 'shadow');
+            } else if (mode === 'editor') {
+                editorPanel.classList.remove('hidden');
+                previewPanel.classList.add('hidden');
+                editorPanel.className = 'w-full max-w-4xl mx-auto bg-white border-x border-slate-200 flex flex-col min-h-[calc(100vh-4rem)]';
+                btnEditor.classList.add('bg-amber-500', 'text-slate-950', 'shadow');
+            } else if (mode === 'preview') {
+                editorPanel.classList.add('hidden');
+                previewPanel.classList.remove('hidden');
+                previewPanel.className = 'w-full bg-slate-200/80 flex flex-col items-center justify-start p-0 sm:p-6 min-h-[calc(100vh-4rem)]';
+                btnPreview.classList.add('bg-amber-500', 'text-slate-950', 'shadow');
+            }
+        }
+
+        // ==================== 10. THEME CATALOG & GEMINI AI THEME GENERATOR ====================
+        function renderThemeCatalog(filterText = '', category = 'all') {
+            const grid = document.getElementById('theme-catalog-grid');
+            const filtered = CURATED_THEMES.filter(t => {
+                const matchText = t.name.toLowerCase().includes(filterText.toLowerCase()) || t.desc.toLowerCase().includes(filterText.toLowerCase());
+                const matchCat = category === 'all' || t.category === category;
+                return matchText && matchCat;
+            });
+
+            document.getElementById('theme-count-label').textContent = `${filtered.length} tema tersedia`;
+
+            grid.innerHTML = filtered.map(theme => {
+                const isSelected = appState.themeId === theme.id;
+                return `
+                    <div onclick="selectTheme('${theme.id}')" class="group cursor-pointer rounded-2xl p-3.5 border-2 transition-all ${isSelected ? 'border-amber-500 bg-amber-50/40 shadow-md' : 'border-slate-200 bg-white hover:border-amber-300'}">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">${theme.badge}</span>
+                            ${isSelected ? '<span class="text-xs font-bold text-amber-600"><i class="fa-solid fa-circle-check"></i> Aktif</span>' : ''}
+                        </div>
+                        <div class="flex items-center gap-1.5 mb-2.5">
+                            <span class="w-6 h-6 rounded-full border border-slate-300 shadow-inner" style="background:${theme.bg}"></span>
+                            <span class="w-6 h-6 rounded-full border border-slate-300 shadow-inner" style="background:${theme.primary}"></span>
+                            <span class="w-6 h-6 rounded-full border border-slate-300 shadow-inner" style="background:${theme.secondary}"></span>
+                        </div>
+                        <h4 class="font-serif font-bold text-sm text-slate-900 group-hover:text-amber-700 transition">${theme.name}</h4>
+                        <p class="text-[11px] text-slate-500 line-clamp-2 mt-0.5">${theme.desc}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterThemes() {
+            renderThemeCatalog(
+                document.getElementById('theme-search-input').value,
+                document.getElementById('theme-category-filter').value
+            );
+        }
+
+        function selectTheme(themeId, notify = true) {
+            const theme = CURATED_THEMES.find(t => t.id === themeId);
+            if (!theme) return;
+            appState.themeId = theme.id;
+            appState.colors = {
+                bg: theme.bg,
+                surface: theme.surface,
+                primary: theme.primary,
+                secondary: theme.secondary,
+                text: theme.text,
+                border: theme.border,
+                fontHeading: theme.fontHeading
+            };
+            applyThemeToInvitation();
+            filterThemes();
+            saveStateToStorage();
+            if (notify) showToast(`Tema "${theme.name}" diterapkan!`, 'success');
+        }
+
+        function updateCustomColors() {
+            appState.themeId = 'custom';
+            appState.colors.bg = document.getElementById('color-bg').value;
+            appState.colors.primary = document.getElementById('color-primary').value;
+            appState.colors.secondary = document.getElementById('color-secondary').value;
+            appState.colors.surface = isDarkColor(appState.colors.bg) ? '#1E293B' : '#FFFFFF';
+            appState.colors.text = isDarkColor(appState.colors.bg) ? '#F1F5F9' : '#334155';
+            applyThemeToInvitation();
+            saveStateToStorage();
+        }
+
+        function isDarkColor(hex) {
+            const c = hex.substring(1);
+            const rgb = parseInt(c, 16);
+            const r = (rgb >> 16) & 0xff, g = (rgb >> 8) & 0xff, b = (rgb >> 0) & 0xff;
+            return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 110;
+        }
+
+        function applyThemeToInvitation() {
+            const root = document.documentElement;
+            root.style.setProperty('--inv-bg', appState.colors.bg);
+            root.style.setProperty('--inv-surface', appState.colors.surface);
+            root.style.setProperty('--inv-primary', appState.colors.primary);
+            root.style.setProperty('--inv-secondary', appState.colors.secondary);
+            root.style.setProperty('--inv-text', appState.colors.text);
+            root.style.setProperty('--inv-border', appState.colors.border);
+            root.style.setProperty('--inv-font-heading', appState.colors.fontHeading);
+
+            document.getElementById('color-bg').value = appState.colors.bg;
+            document.getElementById('color-primary').value = appState.colors.primary;
+            document.getElementById('color-secondary').value = appState.colors.secondary;
+        }
+
+        function fillThemePrompt(text) {
+            document.getElementById('ai-theme-prompt').value = text;
+        }
+
+        async function generateAITheme() {
+            const promptText = document.getElementById('ai-theme-prompt').value.trim();
+            if (!promptText) {
+                showToast('Silakan masukkan deskripsi tema impianmu terlebih dahulu.', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('btn-generate-ai-theme');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Merancang Tema & Puisi dengan Gemini AI...</span>';
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{
+                        parts: [{
+                            text: `Kamu adalah desainer undangan pernikahan mewah. Berdasarkan konsep berikut: "${promptText}", buat konfigurasi tema warna harmonis yang kontrasnya sangat terbaca, serta kutipan pernikahan puitis dalam Bahasa Indonesia.`
+                        }]
+                    }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                themeName: { type: "STRING" },
+                                bgHex: { type: "STRING" },
+                                surfaceHex: { type: "STRING" },
+                                primaryHex: { type: "STRING" },
+                                secondaryHex: { type: "STRING" },
+                                textHex: { type: "STRING" },
+                                fontStyle: { type: "STRING", enum: ["Playfair Display", "Cormorant Garamond"] },
+                                headerSubtitle: { type: "STRING" },
+                                poeticQuote: { type: "STRING" }
+                            },
+                            required: ["themeName", "bgHex", "surfaceHex", "primaryHex", "secondaryHex", "textHex", "fontStyle", "headerSubtitle", "poeticQuote"]
+                        }
+                    }
+                };
+
+                const response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!rawJson) throw new Error('Respons AI kosong');
+
+                const aiTheme = JSON.parse(rawJson);
+                appState.themeId = 'ai-generated';
+                appState.colors = {
+                    bg: aiTheme.bgHex,
+                    surface: aiTheme.surfaceHex,
+                    primary: aiTheme.primaryHex,
+                    secondary: aiTheme.secondaryHex,
+                    text: aiTheme.textHex,
+                    border: `${aiTheme.primaryHex}44`,
+                    fontHeading: `'${aiTheme.fontStyle}', serif`
+                };
+                appState.headerTitle = aiTheme.headerSubtitle;
+                appState.quote = `"${aiTheme.poeticQuote.replace(/^"|"$/g, '')}"`;
+
+                populateEditorForms();
+                applyThemeToInvitation();
+                renderInvitationPreview();
+                saveStateToStorage();
+                showToast(`✨ Tema AI "${aiTheme.themeName}" & kutipan berhasil diterapkan!`, 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Gagal menghubungi Gemini AI. Pastikan koneksi internet aktif.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        // ==================== 11. AI PREWEDDING PHOTO STUDIO ====================
+        function renderStudioPresets() {
+            const container = document.getElementById('studio-presets-grid');
+            container.innerHTML = STUDIO_PRESETS.map(preset => {
+                const isSelected = selectedStudioPreset === preset.id;
+                return `
+                    <button type="button" onclick="selectStudioPreset('${preset.id}')" class="flex items-center gap-2.5 p-3 rounded-xl border text-left transition ${isSelected ? 'border-rose-500 bg-rose-50 text-rose-900 font-semibold shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-rose-300'}">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isSelected ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-600'}">
+                            <i class="fa-solid ${preset.icon} text-xs"></i>
+                        </span>
+                        <span class="text-xs leading-snug">${preset.name}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectStudioPreset(id) {
+            selectedStudioPreset = id;
+            renderStudioPresets();
+        }
+
+        function handleRawStudioUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            rawUploadedPhotoMime = file.type || 'image/jpeg';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const dataUrl = e.target.result;
+                rawUploadedPhotoBase64 = dataUrl.split(',')[1];
+                document.getElementById('studio-raw-preview').src = dataUrl;
+                document.getElementById('studio-upload-placeholder').classList.add('hidden');
+                document.getElementById('studio-raw-preview-wrap').classList.remove('hidden');
+                showToast('Foto mentah berhasil dimuat ke AI Studio!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function generateAIPreweddingPhoto() {
+            if (!rawUploadedPhotoBase64) {
+                showToast('Unggah foto mentahan pasangan terlebih dahulu (Langkah 1).', 'warning');
+                return;
+            }
+
+            const preset = STUDIO_PRESETS.find(p => p.id === selectedStudioPreset) || STUDIO_PRESETS[0];
+            const customDetail = document.getElementById('studio-custom-detail').value.trim();
+            const fullPrompt = customDetail ? `${preset.prompt} Additional styling: ${customDetail}` : preset.prompt;
+
+            const btn = document.getElementById('btn-generate-studio-photo');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>AI Sedang Memproses Foto Studio (10-20 detik)...</span>';
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [
+                            { text: fullPrompt },
+                            { inlineData: { mimeType: rawUploadedPhotoMime, data: rawUploadedPhotoBase64 } }
+                        ]
+                    }],
+                    generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+                };
+
+                const response = await fetchWithRetry(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const imagePart = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+                if (!imagePart || !imagePart.inlineData?.data) throw new Error('Model tidak mengembalikan gambar');
+
+                const mime = imagePart.inlineData.mimeType || 'image/png';
+                currentStudioResultBase64 = `data:${mime};base64,${imagePart.inlineData.data}`;
+
+                document.getElementById('studio-result-badge').textContent = preset.name;
+                document.getElementById('studio-result-container').classList.remove('hidden');
+                applyCanvasStudioFilter();
+                showToast('🎉 Foto Prewedding Studio AI selesai dibuat!', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Gagal memproses foto dengan AI. Silakan coba lagi.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        function applyCanvasStudioFilter() {
+            const tone = document.getElementById('studio-tone-filter').value;
+            const brightness = document.getElementById('studio-brightness').value;
+            const contrast = document.getElementById('studio-contrast').value;
+
+            document.getElementById('val-brightness').textContent = brightness;
+            document.getElementById('val-contrast').textContent = contrast;
+
+            if (!currentStudioResultBase64) return;
+
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.getElementById('studio-hidden-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                let filterStr = `brightness(${brightness}%) contrast(${contrast}%) `;
+                if (tone === 'warm-gold') filterStr += 'sepia(18%) saturate(118%)';
+                else if (tone === 'editorial-bw') filterStr += 'grayscale(100%) contrast(115%)';
+                else if (tone === 'soft-pastel') filterStr += 'saturate(92%) brightness(104%)';
+
+                ctx.filter = filterStr;
+                ctx.drawImage(img, 0, 0);
+                document.getElementById('studio-result-img').src = canvas.toDataURL('image/jpeg', 0.92);
+            };
+            img.src = currentStudioResultBase64;
+        }
+
+        function applyStudioPhotoTo(target) {
+            const finalImg = document.getElementById('studio-result-img').src;
+            if (!finalImg) return;
+
+            if (target === 'cover') {
+                appState.coverImage = finalImg;
+                document.getElementById('editor-cover-thumb').src = finalImg;
+                renderInvitationPreview();
+                saveStateToStorage();
+                showToast('Foto AI Studio dipasang sebagai Sampul Undangan!', 'success');
+            } else if (target === 'gallery') {
+                appState.gallery.unshift(finalImg);
+                renderEditorGallery();
+                renderInvitationPreview();
+                saveStateToStorage();
+                showToast('Foto AI Studio ditambahkan ke Galeri Undangan!', 'success');
+            }
+        }
+
+        function downloadStudioPhoto() {
+            const finalImg = document.getElementById('studio-result-img').src;
+            if (!finalImg) return;
+            const a = document.createElement('a');
+            a.href = finalImg;
+            a.download = `WeddingID-AI-Studio-${Date.now()}.jpg`;
+            a.click();
+        }
+
+        // ==================== 12. FORM SYNC & MEDIA UPLOADS ====================
+        function populateEditorForms() {
+            document.getElementById('inp-header-title').value = appState.headerTitle;
+            document.getElementById('inp-quote').value = appState.quote;
+            document.getElementById('inp-groom-nick').value = appState.groom.nick;
+            document.getElementById('inp-groom-full').value = appState.groom.full;
+            document.getElementById('inp-groom-parents').value = appState.groom.parents;
+            document.getElementById('preview-groom-avatar').src = appState.groom.avatar;
+            document.getElementById('inp-bride-nick').value = appState.bride.nick;
+            document.getElementById('inp-bride-full').value = appState.bride.full;
+            document.getElementById('inp-bride-parents').value = appState.bride.parents;
+            document.getElementById('preview-bride-avatar').src = appState.bride.avatar;
+            document.getElementById('inp-love-story').value = appState.loveStory;
+            document.getElementById('inp-akad-date').value = appState.event.akadDate;
+            document.getElementById('inp-akad-time').value = appState.event.akadTime;
+            document.getElementById('inp-akad-venue').value = appState.event.akadVenue;
+            document.getElementById('inp-resepsi-date').value = appState.event.resepsiDate;
+            document.getElementById('inp-resepsi-time').value = appState.event.resepsiTime;
+            document.getElementById('inp-resepsi-venue').value = appState.event.resepsiVenue;
+            document.getElementById('inp-address').value = appState.event.address;
+            document.getElementById('inp-maps-url').value = appState.event.mapsUrl;
+            document.getElementById('inp-bank-name').value = appState.bank.name;
+            document.getElementById('inp-bank-number').value = appState.bank.number;
+            document.getElementById('inp-bank-holder').value = appState.bank.holder;
+            document.getElementById('editor-cover-thumb').src = appState.coverImage;
+            if (appState.customDomain) document.getElementById('publish-domain-input').value = appState.customDomain;
+            renderEditorGallery();
+        }
+
+        function syncFormToState() {
+            appState.headerTitle = document.getElementById('inp-header-title').value;
+            appState.quote = document.getElementById('inp-quote').value;
+            appState.groom.nick = document.getElementById('inp-groom-nick').value;
+            appState.groom.full = document.getElementById('inp-groom-full').value;
+            appState.groom.parents = document.getElementById('inp-groom-parents').value;
+            appState.bride.nick = document.getElementById('inp-bride-nick').value;
+            appState.bride.full = document.getElementById('inp-bride-full').value;
+            appState.bride.parents = document.getElementById('inp-bride-parents').value;
+            appState.loveStory = document.getElementById('inp-love-story').value;
+            appState.event.akadDate = document.getElementById('inp-akad-date').value;
+            appState.event.akadTime = document.getElementById('inp-akad-time').value;
+            appState.event.akadVenue = document.getElementById('inp-akad-venue').value;
+            appState.event.resepsiDate = document.getElementById('inp-resepsi-date').value;
+            appState.event.resepsiTime = document.getElementById('inp-resepsi-time').value;
+            appState.event.resepsiVenue = document.getElementById('inp-resepsi-venue').value;
+            appState.event.address = document.getElementById('inp-address').value;
+            appState.event.mapsUrl = document.getElementById('inp-maps-url').value;
+            appState.bank.name = document.getElementById('inp-bank-name').value;
+            appState.bank.number = document.getElementById('inp-bank-number').value;
+            appState.bank.holder = document.getElementById('inp-bank-holder').value;
+            renderInvitationPreview();
+            saveStateToStorage();
+        }
+
+        function handleAvatarUpload(event, person) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                appState[person].avatar = e.target.result;
+                document.getElementById(`preview-${person}-avatar`).src = e.target.result;
+                renderInvitationPreview();
+                saveStateToStorage();
+                showToast(`Foto mempelai ${person === 'groom' ? 'pria' : 'wanita'} diperbarui!`, 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleCoverUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                appState.coverImage = e.target.result;
+                document.getElementById('editor-cover-thumb').src = e.target.result;
+                renderInvitationPreview();
+                saveStateToStorage();
+                showToast('Foto sampul berhasil diganti!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleGalleryMultiUpload(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    appState.gallery.push(e.target.result);
+                    renderEditorGallery();
+                    renderInvitationPreview();
+                    saveStateToStorage();
+                };
+                reader.readAsDataURL(file);
+            });
+            showToast(`${files.length} foto ditambahkan ke galeri!`, 'success');
+        }
+
+        function removeGalleryPhoto(index) {
+            appState.gallery.splice(index, 1);
+            renderEditorGallery();
+            renderInvitationPreview();
+            saveStateToStorage();
+        }
+
+        function renderEditorGallery() {
+            const grid = document.getElementById('editor-gallery-grid');
+            grid.innerHTML = appState.gallery.map((src, idx) => `
+                <div class="relative group aspect-square rounded-xl overflow-hidden border border-slate-200">
+                    <img src="${src}" alt="Galeri ${idx+1}" class="w-full h-full object-cover">
+                    <button type="button" onclick="removeGalleryPhoto(${idx})" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-rose-600 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // ==================== 13. MUSIC & AUDIO ENGINE ====================
+        function handleCustomAudioUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            stopAllAudio();
+            const objectUrl = URL.createObjectURL(file);
+            customAudioElement = new Audio(objectUrl);
+            customAudioElement.loop = true;
+
+            appState.musicPreset = 'custom';
+            const optCustom = document.getElementById('opt-custom-music');
+            optCustom.disabled = false;
+            optCustom.textContent = `🎵 ${file.name}`;
+            document.getElementById('inp-music-preset').value = 'custom';
+            document.getElementById('custom-audio-label').textContent = `Terpilih: ${file.name}`;
+            startMusicPlayback();
+            showToast(`Lagu "${file.name}" berhasil dimuat & diputar!`, 'success');
+        }
+
+        function selectMusicPreset(preset) {
+            appState.musicPreset = preset;
+            if (isMusicPlaying) {
+                stopAllAudio();
+                startMusicPlayback();
+            }
+            saveStateToStorage();
+        }
+
+        function toggleMusicPlayback() {
+            if (isMusicPlaying) stopAllAudio();
+            else startMusicPlayback();
+        }
+
+        async function startMusicPlayback() {
+            isMusicPlaying = true;
+            updateMusicUIState();
+
+            if (appState.musicPreset === 'custom' && customAudioElement) {
+                customAudioElement.play().catch(() => {
+                    isMusicPlaying = false;
+                    updateMusicUIState();
+                });
+                return;
+            }
+
+            try {
+                await Tone.start();
+                toneSynth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: appState.musicPreset === 'starlight' ? 'sine' : 'triangle' },
+                    envelope: { attack: 0.15, decay: 0.4, sustain: 0.5, release: 1.8 }
+                }).toDestination();
+                toneSynth.volume.value = -10;
+
+                const melodies = {
+                    canon: ['D4', 'F#4', 'A4', 'D5', 'C#5', 'A4', 'B4', 'F#4', 'G4', 'B4', 'D5', 'G4', 'A4', 'E4', 'A4', 'C#5'],
+                    starlight: ['C5', 'E5', 'G5', 'B5', 'A5', 'G5', 'E5', 'D5', 'F5', 'A5', 'C6', 'B5', 'G5', 'E5', 'D5', 'C5'],
+                    royal: ['F4', 'A4', 'C5', 'F5', 'E5', 'C5', 'D5', 'A4', 'Bb4', 'D5', 'F5', 'Bb4', 'C5', 'G4', 'C5', 'E5']
+                };
+
+                const notes = melodies[appState.musicPreset] || melodies.canon;
+                let step = 0;
+                toneLoop = new Tone.Loop((time) => {
+                    toneSynth.triggerAttackRelease(notes[step % notes.length], '2n', time);
+                    step++;
+                }, '2n').start(0);
+
+                Tone.Transport.bpm.value = 72;
+                Tone.Transport.start();
+            } catch (e) {}
+        }
+
+        function stopAllAudio() {
+            isMusicPlaying = false;
+            updateMusicUIState();
+            if (customAudioElement) customAudioElement.pause();
+            if (toneLoop) { toneLoop.stop(); toneLoop.dispose(); toneLoop = null; }
+            if (toneSynth) { toneSynth.dispose(); toneSynth = null; }
+            if (typeof Tone !== 'undefined' && Tone.Transport.state === 'started') Tone.Transport.stop();
+        }
+
+        function updateMusicUIState() {
+            const editorBtn = document.getElementById('btn-editor-play-music');
+            const vinylSpinner = document.getElementById('vinyl-spinner');
+            const vinylIcon = document.getElementById('vinyl-icon');
+            if (isMusicPlaying) {
+                editorBtn.innerHTML = '<i class="fa-solid fa-pause"></i> <span>Jeda</span>';
+                vinylSpinner.classList.add('animate-spin-slow');
+                vinylIcon.className = 'fa-solid fa-music';
+            } else {
+                editorBtn.innerHTML = '<i class="fa-solid fa-play"></i> <span>Putar</span>';
+                vinylSpinner.classList.remove('animate-spin-slow');
+                vinylIcon.className = 'fa-solid fa-play';
+            }
+        }
+
+        // ==================== 14. RENDER LIVE PREVIEW & SHARE ====================
+        function formatIndoDate(dateStr) {
+            if (!dateStr) return 'Minggu, 20 Desember 2026';
+            try {
+                const d = new Date(dateStr + 'T00:00:00');
+                return d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            } catch (e) { return dateStr; }
+        }
+
+        function formatNumericDate(dateStr) {
+            if (!dateStr) return '20 . 12 . 2026';
+            const parts = dateStr.split('-');
+            return parts.length === 3 ? `${parts[2]} . ${parts[1]} . ${parts[0]}` : dateStr;
+        }
+
+        function renderInvitationPreview() {
+            const coupleNames = `${appState.groom.nick} & ${appState.bride.nick}`;
+            document.getElementById('live-cover-bg').src = appState.coverImage;
+            document.getElementById('live-cover-subtitle').textContent = appState.headerTitle;
+            document.getElementById('live-cover-names').textContent = coupleNames;
+            document.getElementById('live-cover-date').textContent = formatIndoDate(appState.event.akadDate);
+
+            document.getElementById('live-hero-img').src = appState.coverImage;
+            document.getElementById('live-theme-badge').textContent = appState.headerTitle;
+            document.getElementById('live-hero-names').textContent = coupleNames;
+            document.getElementById('live-hero-date').textContent = formatNumericDate(appState.event.akadDate);
+            document.getElementById('live-quote').textContent = appState.quote;
+
+            document.getElementById('live-groom-img').src = appState.groom.avatar;
+            document.getElementById('live-groom-full').textContent = appState.groom.full;
+            document.getElementById('live-groom-parents').textContent = appState.groom.parents;
+
+            document.getElementById('live-bride-img').src = appState.bride.avatar;
+            document.getElementById('live-bride-full').textContent = appState.bride.full;
+            document.getElementById('live-bride-parents').textContent = appState.bride.parents;
+
+            document.getElementById('live-love-story').textContent = appState.loveStory;
+
+            document.getElementById('live-akad-date').textContent = formatIndoDate(appState.event.akadDate);
+            document.getElementById('live-akad-time').innerHTML = `<i class="fa-regular fa-clock mr-1"></i> ${appState.event.akadTime}`;
+            document.getElementById('live-akad-venue').textContent = appState.event.akadVenue;
+
+            document.getElementById('live-resepsi-date').textContent = formatIndoDate(appState.event.resepsiDate);
+            document.getElementById('live-resepsi-time').innerHTML = `<i class="fa-regular fa-clock mr-1"></i> ${appState.event.resepsiTime}`;
+            document.getElementById('live-resepsi-venue').textContent = appState.event.resepsiVenue;
+            document.getElementById('live-address').textContent = appState.event.address;
+            document.getElementById('live-maps-btn').href = appState.event.mapsUrl || '#';
+
+            document.getElementById('live-bank-name').textContent = appState.bank.name;
+            document.getElementById('live-bank-number').textContent = appState.bank.number;
+            document.getElementById('live-bank-holder').textContent = `a.n. ${appState.bank.holder}`;
+
+            const liveGallery = document.getElementById('live-gallery-grid');
+            liveGallery.innerHTML = appState.gallery.map((src, i) => `
+                <div onclick="openLightbox('${src}')" class="cursor-pointer overflow-hidden rounded-2xl aspect-[4/5] shadow-sm group">
+                    <img src="${src}" alt="Prewedding ${i+1}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                </div>
+            `).join('');
+
+            renderLiveGuestbook();
+            document.getElementById('live-footer-names').textContent = coupleNames;
+        }
+
+        function openInvitationEnvelope() {
+            document.getElementById('invitation-cover-curtain').classList.add('opened');
+            if (!isMusicPlaying) startMusicPlayback();
+        }
+
+        function reopenEnvelopeCover() {
+            document.getElementById('invitation-cover-curtain').classList.remove('opened');
+            document.getElementById('invitation-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function startCountdownTimer() {
+            setInterval(() => {
+                const targetTime = new Date(`${appState.event.akadDate || '2026-12-20'}T08:00:00`).getTime();
+                const diff = Math.max(0, targetTime - Date.now());
+                document.getElementById('cd-days').textContent = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                document.getElementById('cd-hours').textContent = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                document.getElementById('cd-mins').textContent = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
+                document.getElementById('cd-secs').textContent = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+            }, 1000);
+        }
+
+        function submitGuestRsvp(event) {
+            event.preventDefault();
+            const name = document.getElementById('rsvp-name').value.trim();
+            const status = document.getElementById('rsvp-status').value;
+            const message = document.getElementById('rsvp-message').value.trim();
+            if (!name || !message) return;
+            appState.guestbook.unshift({ name, status, message });
+            document.getElementById('rsvp-message').value = '';
+            renderLiveGuestbook();
+            saveStateToStorage();
+            showToast('Terima kasih! Ucapan & konfirmasi kehadiranmu telah terkirim.', 'success');
+        }
+
+        function renderLiveGuestbook() {
+            const list = document.getElementById('live-guestbook-list');
+            list.innerHTML = appState.guestbook.map(item => `
+                <div class="p-3 rounded-2xl bg-black/5 space-y-1 text-left">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-bold text-xs">${escapeHtml(item.name)}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded-full inv-accent-bg font-medium">${escapeHtml(item.status)}</span>
+                    </div>
+                    <p class="text-xs opacity-85 leading-relaxed">${escapeHtml(item.message)}</p>
+                </div>
+            `).join('');
+        }
+
+        function copyBankNumber() {
+            copyToClipboard(appState.bank.number, `Nomor rekening ${appState.bank.number} berhasil disalin!`);
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        }
+
+        function openPublishModal() {
+            document.getElementById('publish-modal').classList.remove('hidden');
+            updatePublishedLink();
+        }
+
+        function closePublishModal() {
+            document.getElementById('publish-modal').classList.add('hidden');
+        }
+
+        function copyPublishedUrl() {
+            copyToClipboard(document.getElementById('published-url-output').value, 'Link undangan berhasil disalin!');
+        }
+
+        function shareToWhatsApp() {
+            const url = document.getElementById('published-url-output').value;
+            const guestName = document.getElementById('publish-guest-input').value.trim() || 'Bapak/Ibu/Saudara/i';
+            const couple = `${appState.groom.nick} & ${appState.bride.nick}`;
+            const message = `Kepada Yth. *${guestName}*,\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk hadir dan memberikan doa restu pada acara pernikahan kami:\n\n*${couple}*\n📅 ${formatIndoDate(appState.event.akadDate)}\n📍 ${appState.event.resepsiVenue}\n\nBuka undangan digital lengkap melalui tautan berikut:\n${url}\n\nTerima kasih.`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+        }
+
+        function activatePureGuestMode(closeModal = true) {
+            if (closeModal) closePublishModal();
+            document.getElementById('studio-navbar').classList.add('hidden');
+            document.getElementById('editor-panel').classList.add('hidden');
+            document.getElementById('preview-toolbar').classList.add('hidden');
+            document.getElementById('guest-mode-banner').classList.remove('hidden');
+
+            const previewPanel = document.getElementById('preview-panel');
+            previewPanel.className = 'w-full min-h-screen bg-slate-950 flex items-center justify-center p-0 sm:p-4';
+
+            const invContainer = document.getElementById('invitation-container');
+            invContainer.classList.remove('sm:rounded-[2.2rem]');
+            invContainer.classList.add('min-h-screen');
+            reopenEnvelopeCover();
+        }
+
+        function exitPureGuestMode() {
+            document.getElementById('studio-navbar').classList.remove('hidden');
+            document.getElementById('preview-toolbar').classList.remove('hidden');
+            document.getElementById('guest-mode-banner').classList.add('hidden');
+
+            const invContainer = document.getElementById('invitation-container');
+            invContainer.classList.add('sm:rounded-[2.2rem]');
+            invContainer.classList.remove('min-h-screen');
+
+            if (!currentAccessRole) {
+                document.getElementById('paywall-gate').classList.remove('hidden');
+            }
+            setWorkspaceMode(window.innerWidth >= 1024 ? 'split' : 'editor');
+        }
+
+        function copyToClipboard(text, successMsg) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast(successMsg, 'success');
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        async function fetchWithRetry(url, options, retries = 4, delay = 1000) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const res = await fetch(url, options);
+                    if (res.ok) return res;
+                    if (res.status === 429 || res.status >= 500) {
+                        await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+                        continue;
+                    }
+                    return res;
+                } catch (err) {
+                    if (i === retries - 1) throw err;
+                    await new Promise(r => setTimeout(r, delay * Math.pow(2, i)));
+                }
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-slate-900 text-emerald-300 border-emerald-500/40',
+                warning: 'bg-slate-900 text-amber-300 border-amber-500/40',
+                error: 'bg-slate-900 text-rose-300 border-rose-500/40',
+                info: 'bg-slate-900 text-sky-300 border-sky-500/40'
+            };
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl border shadow-2xl text-xs sm:text-sm font-medium transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
