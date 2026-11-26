@@ -165,27 +165,40 @@
 
             <!-- TAB B: DEVELOPER LOGIN -->
             <div id="gate-content-dev" class="hidden p-6 space-y-5">
-                <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
-                    <i data-lucide="terminal" class="w-5 h-5 text-amber-400 shrink-0 mt-0.5"></i>
-                    <div class="text-xs text-slate-300 space-y-1">
-                        <p class="font-bold text-amber-200">Akses Khusus Pemilik & Developer</p>
-                        <p>Masuk menggunakan <strong>Developer Access Key</strong> untuk membuka studio tanpa pembayaran serta mengelola QRIS, rekening transfer, dan generator kode lisensi klien.</p>
-                    </div>
-                </div>
-
-                <form onsubmit="verifyDeveloperLogin(event)" class="space-y-4">
+                <form onsubmit="verifyDeveloperAccess(event)" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1.5">Developer Access Key</label>
-                        <input type="password" id="dev-key-input" required placeholder="Masukkan kunci developer..." class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label for="dev-key-input" class="text-xs font-bold text-slate-300">Kode OTP WhatsApp Admin</label>
+                            <span class="text-[11px] text-slate-400">Rahasia Admin</span>
+                        </div>
+                        <input type="password" id="dev-key-input" required placeholder="Masukkan kode OTP dari WhatsApp Admin..." class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-amber-400">
                     </div>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-400">Default Key: <code class="text-amber-300">DEV-WEDDINGID-2026</code></span>
-                        <button type="button" onclick="document.getElementById('dev-key-input').value = adminConfig.devKey" class="text-amber-400 hover:underline font-medium">Isi Otomatis</button>
-                    </div>
+
                     <button type="submit" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
-                        <i data-lucide="unlock" class="w-4 h-4"></i> Masuk sebagai Developer
+                        <i data-lucide="unlock" class="w-4 h-4"></i> Masuk
                     </button>
                 </form>
+
+                <!-- 1-Step OTP ke Nomor WhatsApp Admin -->
+                <div class="pt-4 border-t border-slate-800 space-y-2.5">
+                    <label for="otp-admin-wa-input" class="block text-xs font-semibold text-slate-300">Kirim OTP ke Nomor WhatsApp Admin</label>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="otp-admin-wa-input" placeholder="6281234567890" class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-amber-400">
+                        <button type="button" onclick="generateAdminOtp()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shrink-0 flex items-center justify-center gap-1.5">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i> Kirim OTP ke WA
+                        </button>
+                    </div>
+
+                    <div id="otp-sim-box" class="hidden flex items-center justify-between gap-2 px-3.5 py-2 rounded-xl bg-slate-950 border border-amber-500/30 text-xs">
+                        <span class="text-slate-300">
+                            OTP rahasia dikirim ke WA <strong id="otp-target-wa-label" class="font-mono text-amber-300"></strong>
+                            <span id="otp-sim-timer" class="text-[11px] text-emerald-400 font-mono ml-1">(05:00)</span>
+                        </span>
+                        <a id="otp-open-wa-btn" href="#" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold flex items-center gap-1 transition shrink-0">
+                            <i class="fa-brands fa-whatsapp"></i> Buka WA
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -674,211 +687,211 @@
                 <!-- FLOATING VINYL MUSIC PLAYER -->
                 <button onclick="toggleMusicPlayback()" id="floating-vinyl-btn" title="Putar / Jeda Musik" class="fixed sm:absolute bottom-5 right-5 z-40 w-12 h-12 rounded-full vinyl-disc flex items-center justify-center text-amber-300 border-2 border-amber-400/50 transition transform hover:scale-105">
                     <div id="vinyl-spinner" class="w-full h-full rounded-full flex items-center justify-center">
-                        <div class="w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center text-[8px] text-slate-950">
+            <!-- ==================== INVITATION FRAME (PER-SLIDE DECK) ==================== -->
+            <div id="invitation-container" class="inv-theme-wrapper relative w-full max-w-[480px] min-h-[760px] sm:rounded-[2.2rem] shadow-2xl overflow-hidden border border-slate-300/60 flex flex-col">
+                
+                <!-- FLOATING VINYL MUSIC PLAYER -->
+                <button onclick="toggleMusicPlayback()" id="floating-vinyl-btn" title="Putar / Jeda Musik" class="fixed sm:absolute bottom-20 sm:bottom-20 right-4 z-40 w-11 h-11 rounded-full vinyl-disc flex items-center justify-center text-amber-300 border-2 border-amber-400/50 transition transform hover:scale-105">
+                    <div id="vinyl-spinner" class="w-full h-full rounded-full flex items-center justify-center">
+                        <div class="w-3.5 h-3.5 rounded-full bg-amber-400 flex items-center justify-center text-[7px] text-slate-950">
                             <i id="vinyl-icon" class="fa-solid fa-music"></i>
                         </div>
                     </div>
                 </button>
 
-                <!-- 1. OPENING ENVELOPE COVER CURTAIN -->
-                <div id="invitation-cover-curtain" class="cover-curtain absolute inset-0 z-30 flex flex-col justify-between items-center text-center p-8 bg-slate-950 text-white">
-                    <img id="live-cover-bg" src="" alt="Cover" class="absolute inset-0 w-full h-full object-cover opacity-55 scale-105 transition-transform duration-1000">
-                    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85"></div>
-
-                    <div class="relative z-10 pt-6 space-y-2">
-                        <p id="live-cover-subtitle" class="text-xs uppercase tracking-[0.3em] text-amber-300/90 font-medium">The Wedding Of</p>
-                        <h2 id="live-cover-names" class="font-serif text-4xl sm:text-5xl font-bold tracking-wide text-white drop-shadow-md">Raka & Nadira</h2>
-                        <p id="live-cover-date" class="text-xs sm:text-sm tracking-widest text-slate-200 pt-1">Minggu, 20 Desember 2026</p>
+                <!-- 1. OPENING ENVELOPE COVER CURTAIN (SLIDE 0 / SAMPUL PEMBUKA) -->
+                <div id="invitation-cover-curtain" class="cover-curtain absolute inset-0 z-30 flex flex-col justify-between items-center text-center p-6 sm:p-8 bg-slate-950 text-white">
+                    <!-- Bingkai Foto Sampul Proporsional dengan object-cover object-top -->
+                    <div class="relative w-full max-w-[330px] aspect-[3/4] rounded-3xl overflow-hidden border border-amber-300/35 shadow-2xl mt-1">
+                        <img id="live-cover-bg" src="" alt="Cover" class="w-full h-full object-cover object-top transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-slate-950/45"></div>
+                        <div class="absolute top-3 inset-x-3 text-center">
+                            <p id="live-cover-subtitle" class="text-[10px] uppercase tracking-[0.28em] text-amber-300 font-semibold drop-shadow">The Wedding Of</p>
+                        </div>
+                        <div class="absolute bottom-4 inset-x-3 text-center space-y-1">
+                            <h2 id="live-cover-names" class="font-serif text-3xl sm:text-4xl font-bold tracking-wide text-white drop-shadow">Raka &amp; Nadira</h2>
+                            <p id="live-cover-date" class="text-xs tracking-wider text-amber-100/90 drop-shadow">Minggu, 20 Desember 2026</p>
+                        </div>
                     </div>
 
-                    <div class="relative z-10 w-full max-w-xs space-y-4 pb-6">
-                        <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 space-y-1">
-                            <p class="text-[11px] uppercase tracking-widest text-amber-200/80">Kepada Yth. Bapak/Ibu/Saudara/i</p>
-                            <p id="live-guest-name" class="font-serif text-lg sm:text-xl font-semibold text-white">Tamu Undangan Spesial</p>
-                            <p class="text-[11px] text-slate-300">Mohon maaf apabila ada kesalahan penulisan nama & gelar</p>
+                    <div class="relative z-10 w-full max-w-xs space-y-3 pt-3">
+                        <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-3.5 space-y-0.5">
+                            <p class="text-[10px] uppercase tracking-widest text-amber-200/85">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+                            <p id="live-guest-name" class="font-serif text-base sm:text-lg font-semibold text-white">Tamu Undangan Spesial</p>
+                            <p class="text-[10px] text-slate-300">Mohon maaf apabila ada kesalahan penulisan nama &amp; gelar</p>
                         </div>
 
-                        <button onclick="openInvitationEnvelope()" class="w-full py-3.5 px-6 rounded-full inv-accent-bg font-semibold text-sm tracking-wide shadow-xl hover:brightness-110 transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <button onclick="openInvitationEnvelope()" class="w-full py-3 px-6 rounded-full inv-accent-bg font-semibold text-sm tracking-wide shadow-xl hover:brightness-110 transition transform active:scale-95 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-envelope-open-text"></i>
                             <span>Buka Undangan</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- 2. MAIN INVITATION BODY -->
-                <div id="invitation-body" class="relative z-10 pb-20">
-                    <!-- Hero Section -->
-                    <div class="relative h-[460px] flex flex-col justify-end text-center p-6 overflow-hidden">
-                        <img id="live-hero-img" src="" alt="Hero" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[var(--inv-bg)] via-black/35 to-black/30"></div>
-                        
-                        <div class="relative z-10 space-y-2 pb-4">
-                            <span id="live-theme-badge" class="inline-block text-[10px] uppercase tracking-[0.25em] px-3 py-1 rounded-full bg-black/40 text-amber-200 backdrop-blur-sm border border-white/15">
-                                We Are Getting Married
-                            </span>
-                            <h1 id="live-hero-names" class="inv-heading text-4xl sm:text-5xl font-bold drop-shadow-sm">Raka & Nadira</h1>
-                            <p id="live-hero-date" class="text-xs sm:text-sm font-medium tracking-widest uppercase inv-accent-text">20 . 12 . 2026</p>
+                <!-- 2. SLIDE-BY-SLIDE INVITATION DECK (TERBUKA PER-SLIDE) -->
+                <div id="invitation-body" class="relative z-10 flex-1 flex flex-col justify-between p-5 sm:p-6 pb-20">
+                    
+                    <!-- SLIDE 1: SAMPUL & KUTIPAN -->
+                    <div data-slide-index="0" class="invitation-slide space-y-5 my-auto animate-fade-in-up">
+                        <div class="relative w-full max-w-[340px] mx-auto aspect-[3/4] rounded-3xl overflow-hidden shadow-xl border inv-border">
+                            <img id="live-hero-img" src="" alt="Hero" class="w-full h-full object-cover object-top">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
+                            <div class="absolute bottom-4 inset-x-4 text-center text-white space-y-1">
+                                <span id="live-theme-badge" class="inline-block text-[10px] uppercase tracking-[0.22em] px-3 py-0.5 rounded-full bg-black/45 text-amber-200 backdrop-blur-sm border border-white/15">
+                                    We Are Getting Married
+                                </span>
+                                <h1 id="live-hero-names" class="font-serif text-3xl sm:text-4xl font-bold drop-shadow">Raka &amp; Nadira</h1>
+                                <p id="live-hero-date" class="text-xs font-medium tracking-widest uppercase text-amber-300">20 . 12 . 2026</p>
+                            </div>
+                        </div>
+
+                        <div class="inv-surface rounded-3xl p-5 text-center space-y-2.5 shadow-sm">
+                            <div class="w-10 h-0.5 mx-auto inv-accent-bg opacity-70"></div>
+                            <p id="live-quote" class="font-cormorant italic text-base sm:text-lg leading-relaxed"></p>
+                            <div class="w-10 h-0.5 mx-auto inv-accent-bg opacity-70"></div>
                         </div>
                     </div>
 
-                    <!-- Quote -->
-                    <div class="px-6 py-8 text-center space-y-4">
-                        <div class="w-12 h-0.5 mx-auto inv-accent-bg opacity-60"></div>
-                        <p id="live-quote" class="font-cormorant italic text-lg sm:text-xl leading-relaxed px-2"></p>
-                        <div class="w-12 h-0.5 mx-auto inv-accent-bg opacity-60"></div>
-                    </div>
-
-                    <!-- Couple Profile -->
-                    <div class="px-6 py-6 space-y-8">
+                    <!-- SLIDE 2: PROFIL MEMPELAI -->
+                    <div data-slide-index="1" class="invitation-slide hidden space-y-4 my-auto animate-fade-in-up">
                         <div class="text-center space-y-1">
-                            <p class="text-xs uppercase tracking-[0.2em] inv-accent-text font-semibold">Assalamu'alaikum Wr. Wb.</p>
-                            <p class="text-xs opacity-80 max-w-sm mx-auto">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami:</p>
+                            <p class="text-[11px] uppercase tracking-[0.2em] inv-accent-text font-semibold">Mempelai Berbahagia</p>
+                            <p class="text-xs opacity-80">Dengan memohon rahmat &amp; ridho Tuhan YME, kami mengundang Anda:</p>
                         </div>
 
-                        <div class="inv-surface rounded-3xl p-6 text-center shadow-sm space-y-3">
-                            <div class="w-28 h-28 mx-auto rounded-full p-1 border-2 inv-border">
-                                <img id="live-groom-img" src="" alt="Mempelai Pria" class="w-full h-full rounded-full object-cover">
+                        <div class="inv-surface rounded-3xl p-4 text-center shadow-sm space-y-2">
+                            <div class="w-20 h-20 mx-auto rounded-full p-0.5 border-2 inv-border overflow-hidden">
+                                <img id="live-groom-img" src="" alt="Mempelai Pria" class="w-full h-full rounded-full object-cover object-top">
                             </div>
-                            <div>
-                                <h3 id="live-groom-full" class="inv-heading text-2xl font-bold"></h3>
-                                <p id="live-groom-parents" class="text-xs opacity-75 mt-1"></p>
-                            </div>
+                            <h3 id="live-groom-full" class="inv-heading text-xl font-bold"></h3>
+                            <p id="live-groom-parents" class="text-xs opacity-75"></p>
                         </div>
 
-                        <div class="text-center font-serif italic text-3xl inv-accent-text">&amp;</div>
+                        <div class="text-center font-serif italic text-2xl inv-accent-text leading-none">&amp;</div>
 
-                        <div class="inv-surface rounded-3xl p-6 text-center shadow-sm space-y-3">
-                            <div class="w-28 h-28 mx-auto rounded-full p-1 border-2 inv-border">
-                                <img id="live-bride-img" src="" alt="Mempelai Wanita" class="w-full h-full rounded-full object-cover">
+                        <div class="inv-surface rounded-3xl p-4 text-center shadow-sm space-y-2">
+                            <div class="w-20 h-20 mx-auto rounded-full p-0.5 border-2 inv-border overflow-hidden">
+                                <img id="live-bride-img" src="" alt="Mempelai Wanita" class="w-full h-full rounded-full object-cover object-top">
                             </div>
-                            <div>
-                                <h3 id="live-bride-full" class="inv-heading text-2xl font-bold"></h3>
-                                <p id="live-bride-parents" class="text-xs opacity-75 mt-1"></p>
-                            </div>
+                            <h3 id="live-bride-full" class="inv-heading text-xl font-bold"></h3>
+                            <p id="live-bride-parents" class="text-xs opacity-75"></p>
                         </div>
                     </div>
 
-                    <!-- Love Story -->
-                    <div class="px-6 py-4">
-                        <div class="inv-surface rounded-3xl p-6 text-center space-y-3">
-                            <i class="fa-solid fa-heart inv-accent-text text-xl"></i>
-                            <h3 class="inv-heading text-xl font-bold">Kisah Cinta Kami</h3>
-                            <p id="live-love-story" class="text-xs sm:text-sm leading-relaxed opacity-85"></p>
-                        </div>
-                    </div>
-
-                    <!-- Countdown -->
-                    <div class="px-6 py-6">
-                        <div class="inv-surface rounded-3xl p-6 text-center space-y-4 shadow-sm">
-                            <p class="text-xs uppercase tracking-[0.2em] inv-accent-text font-bold">Menghitung Hari Bahagia</p>
+                    <!-- SLIDE 3: WAKTU, LOKASI & COUNTDOWN -->
+                    <div data-slide-index="2" class="invitation-slide hidden space-y-4 my-auto animate-fade-in-up">
+                        <div class="inv-surface rounded-3xl p-4 text-center space-y-2.5 shadow-sm">
+                            <p class="text-[10px] uppercase tracking-[0.2em] inv-accent-text font-bold">Menghitung Hari Bahagia</p>
                             <div class="grid grid-cols-4 gap-2">
-                                <div class="p-3 rounded-2xl bg-black/5">
-                                    <span id="cd-days" class="inv-heading text-2xl font-bold block">00</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Hari</span>
+                                <div class="p-2 rounded-2xl bg-black/5">
+                                    <span id="cd-days" class="inv-heading text-xl font-bold block">00</span>
+                                    <span class="text-[10px] opacity-70">Hari</span>
                                 </div>
-                                <div class="p-3 rounded-2xl bg-black/5">
-                                    <span id="cd-hours" class="inv-heading text-2xl font-bold block">00</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Jam</span>
+                                <div class="p-2 rounded-2xl bg-black/5">
+                                    <span id="cd-hours" class="inv-heading text-xl font-bold block">00</span>
+                                    <span class="text-[10px] opacity-70">Jam</span>
                                 </div>
-                                <div class="p-3 rounded-2xl bg-black/5">
-                                    <span id="cd-mins" class="inv-heading text-2xl font-bold block">00</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Menit</span>
+                                <div class="p-2 rounded-2xl bg-black/5">
+                                    <span id="cd-mins" class="inv-heading text-xl font-bold block">00</span>
+                                    <span class="text-[10px] opacity-70">Menit</span>
                                 </div>
-                                <div class="p-3 rounded-2xl bg-black/5">
-                                    <span id="cd-secs" class="inv-heading text-2xl font-bold block">00</span>
-                                    <span class="text-[10px] uppercase tracking-wider opacity-70">Detik</span>
+                                <div class="p-2 rounded-2xl bg-black/5">
+                                    <span id="cd-secs" class="inv-heading text-xl font-bold block">00</span>
+                                    <span class="text-[10px] opacity-70">Detik</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Events -->
-                    <div class="px-6 py-4 space-y-4">
-                        <h2 class="inv-heading text-2xl sm:text-3xl font-bold text-center">Rangkaian Acara</h2>
-                        
-                        <div class="inv-surface rounded-3xl p-6 text-center space-y-2.5 shadow-sm">
-                            <span class="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider inv-accent-bg">Akad Nikah</span>
-                            <p id="live-akad-date" class="font-bold text-sm"></p>
+                        <div class="inv-surface rounded-3xl p-4 text-center space-y-1.5 shadow-sm">
+                            <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider inv-accent-bg">Akad Nikah</span>
+                            <p id="live-akad-date" class="font-bold text-xs sm:text-sm"></p>
                             <p id="live-akad-time" class="text-xs inv-accent-text font-semibold"></p>
-                            <p id="live-akad-venue" class="font-serif font-bold text-base pt-1"></p>
+                            <p id="live-akad-venue" class="font-serif font-bold text-sm"></p>
                         </div>
 
-                        <div class="inv-surface rounded-3xl p-6 text-center space-y-2.5 shadow-sm">
-                            <span class="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider inv-accent-bg">Resepsi Pernikahan</span>
-                            <p id="live-resepsi-date" class="font-bold text-sm"></p>
+                        <div class="inv-surface rounded-3xl p-4 text-center space-y-1.5 shadow-sm">
+                            <span class="inline-block px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider inv-accent-bg">Resepsi Pernikahan</span>
+                            <p id="live-resepsi-date" class="font-bold text-xs sm:text-sm"></p>
                             <p id="live-resepsi-time" class="text-xs inv-accent-text font-semibold"></p>
-                            <p id="live-resepsi-venue" class="font-serif font-bold text-base pt-1"></p>
-                            <p id="live-address" class="text-xs opacity-75 leading-relaxed"></p>
-                            
-                            <div class="pt-3">
-                                <a id="live-maps-btn" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full inv-accent-bg text-xs font-semibold shadow hover:brightness-110 transition">
+                            <p id="live-resepsi-venue" class="font-serif font-bold text-sm"></p>
+                            <p id="live-address" class="text-[11px] opacity-75 leading-relaxed"></p>
+                            <div class="pt-2">
+                                <a id="live-maps-btn" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full inv-accent-bg text-xs font-semibold shadow hover:brightness-110 transition">
                                     <i class="fa-solid fa-location-dot"></i> Buka Google Maps
                                 </a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Photo Gallery -->
-                    <div class="px-6 py-6 space-y-4">
-                        <div class="text-center">
-                            <h2 class="inv-heading text-2xl sm:text-3xl font-bold">Galeri Bahagia</h2>
-                            <p class="text-xs opacity-75">Momen indah yang terabadikan</p>
+                    <!-- SLIDE 4: KISAH CINTA & GALERI -->
+                    <div data-slide-index="3" class="invitation-slide hidden space-y-4 my-auto animate-fade-in-up">
+                        <div class="inv-surface rounded-3xl p-4 text-center space-y-1.5 shadow-sm">
+                            <h3 class="inv-heading text-lg font-bold">Kisah Cinta Kami</h3>
+                            <p id="live-love-story" class="text-xs leading-relaxed opacity-85"></p>
                         </div>
-                        <div id="live-gallery-grid" class="grid grid-cols-2 gap-2.5"></div>
-                    </div>
 
-                    <!-- Digital Gift -->
-                    <div class="px-6 py-4">
-                        <div class="inv-surface rounded-3xl p-6 text-center space-y-3 shadow-sm">
-                            <i class="fa-solid fa-gift text-2xl inv-accent-text"></i>
-                            <h3 class="inv-heading text-2xl font-bold">Amplop Digital</h3>
-                            <p class="text-xs opacity-75">Doa restu Anda merupakan karunia yang sangat berarti bagi kami.</p>
-                            
-                            <div class="p-4 rounded-2xl bg-black/5 border inv-border space-y-1.5">
-                                <p id="live-bank-name" class="text-xs font-bold uppercase tracking-wider inv-accent-text"></p>
-                                <p id="live-bank-number" class="font-mono text-lg font-bold tracking-wider"></p>
-                                <p id="live-bank-holder" class="text-xs opacity-80"></p>
-                                <button onclick="copyBankNumber()" class="mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full inv-accent-bg text-xs font-semibold hover:brightness-110 transition">
-                                    <i class="fa-regular fa-copy"></i> Salin No. Rekening
-                                </button>
-                            </div>
+                        <div class="space-y-2">
+                            <h3 class="inv-heading text-xl font-bold text-center">Galeri Bahagia</h3>
+                            <div id="live-gallery-grid" class="grid grid-cols-2 gap-2.5"></div>
                         </div>
                     </div>
 
-                    <!-- RSVP & Guestbook -->
-                    <div class="px-6 py-6 space-y-4">
-                        <div class="inv-surface rounded-3xl p-6 space-y-4 shadow-sm">
-                            <div class="text-center">
-                                <h3 class="inv-heading text-2xl font-bold">Ucapan & Konfirmasi Kehadiran</h3>
-                                <p class="text-xs opacity-75">Kirimkan doa terbaik untuk kedua mempelai</p>
-                            </div>
+                    <!-- SLIDE 5: AMPLOP DIGITAL & UCAPAN RSVP -->
+                    <div data-slide-index="4" class="invitation-slide hidden space-y-4 my-auto animate-fade-in-up">
+                        <div class="inv-surface rounded-3xl p-4 text-center space-y-1.5 shadow-sm">
+                            <h3 class="inv-heading text-lg font-bold">Amplop Digital</h3>
+                            <p id="live-bank-name" class="text-xs font-bold uppercase tracking-wider inv-accent-text"></p>
+                            <p id="live-bank-number" class="font-mono text-base font-bold tracking-wider"></p>
+                            <p id="live-bank-holder" class="text-xs opacity-80"></p>
+                            <button onclick="copyBankNumber()" class="mt-1 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full inv-accent-bg text-xs font-semibold hover:brightness-110 transition">
+                                <i class="fa-regular fa-copy"></i> Salin No. Rekening
+                            </button>
+                        </div>
 
-                            <form onsubmit="submitGuestRsvp(event)" class="space-y-3">
-                                <input type="text" id="rsvp-name" required placeholder="Nama Anda" class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-black/5 border inv-border focus:outline-none">
-                                <select id="rsvp-status" class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-black/5 border inv-border focus:outline-none">
+                        <div class="inv-surface rounded-3xl p-4 space-y-3 shadow-sm">
+                            <h3 class="inv-heading text-lg font-bold text-center">Ucapan &amp; RSVP</h3>
+                            <form onsubmit="submitGuestRsvp(event)" class="space-y-2">
+                                <input type="text" id="rsvp-name" required placeholder="Nama Anda" class="w-full px-3 py-2 text-xs rounded-xl bg-black/5 border inv-border focus:outline-none">
+                                <select id="rsvp-status" class="w-full px-3 py-2 text-xs rounded-xl bg-black/5 border inv-border focus:outline-none">
                                     <option value="Hadir">InsyaAllah Hadir</option>
                                     <option value="Masih Ragu">Masih Ragu</option>
                                     <option value="Berhalangan">Maaf, Berhalangan Hadir</option>
                                 </select>
-                                <textarea id="rsvp-message" required rows="3" placeholder="Tuliskan ucapan & doa restu..." class="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-black/5 border inv-border focus:outline-none"></textarea>
-                                <button type="submit" class="w-full py-3 rounded-xl inv-accent-bg font-bold text-xs sm:text-sm shadow hover:brightness-110 transition">
-                                    <i class="fa-solid fa-paper-plane mr-1.5"></i> Kirim Ucapan & RSVP
+                                <textarea id="rsvp-message" required rows="2" placeholder="Tuliskan ucapan &amp; doa restu..." class="w-full px-3 py-2 text-xs rounded-xl bg-black/5 border inv-border focus:outline-none"></textarea>
+                                <button type="submit" class="w-full py-2.5 rounded-xl inv-accent-bg font-bold text-xs shadow hover:brightness-110 transition">
+                                    <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Ucapan
                                 </button>
                             </form>
-
-                            <div id="live-guestbook-list" class="space-y-2.5 max-h-64 overflow-y-auto pt-2 border-t inv-border"></div>
+                            <div id="live-guestbook-list" class="space-y-2 max-h-36 overflow-y-auto pt-2 border-t inv-border"></div>
                         </div>
+
+                        <footer class="text-center space-y-1 pt-1 opacity-85">
+                            <p id="live-footer-names" class="inv-heading text-lg font-bold"></p>
+                            <div class="flex flex-col items-center justify-center gap-1">
+                                <img id="live-footer-custom-logo" src="" alt="Brand Logo" class="hidden h-7 max-w-[120px] object-contain rounded">
+                                <p class="text-[10px]">Dibuat dengan ♥ menggunakan <span class="font-semibold">Wedding.id</span> &bull; <span class="opacity-75">REEZZ 2026</span></p>
+                            </div>
+                        </footer>
                     </div>
 
-                    <!-- Footer -->
-                    <footer class="text-center px-6 pt-4 pb-6 space-y-2 opacity-80">
-                        <p class="text-xs">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.</p>
-                        <p id="live-footer-names" class="inv-heading text-xl font-bold pt-2"></p>
-                        <div class="pt-4 flex flex-col items-center justify-center gap-1.5">
-                            <img id="live-footer-custom-logo" src="" alt="Brand Logo" class="hidden h-9 max-w-[140px] object-contain rounded-lg">
-                            <p class="text-[10px]">Dibuat dengan ♥ menggunakan <span class="font-semibold">Wedding.id</span> Studio &bull; <span class="opacity-75">REEZZ 2026</span></p>
+                    <!-- SLIDE NAVIGATION CONTROLS (PREV / DOTS / NEXT) -->
+                    <div id="slide-controls" class="mt-5 pt-3 border-t inv-border flex items-center justify-between gap-2">
+                        <button type="button" id="btn-prev-slide" onclick="prevInvitationSlide()" class="px-3.5 py-2 rounded-full inv-surface text-xs font-semibold flex items-center gap-1.5 hover:brightness-95 disabled:opacity-35 transition">
+                            <i class="fa-solid fa-chevron-left"></i> <span>Prev</span>
+                        </button>
+
+                        <div id="slide-dots" class="flex items-center gap-1.5">
+                            <button type="button" onclick="goToInvitationSlide(0)" class="slide-dot w-2.5 h-2.5 rounded-full inv-accent-bg transition"></button>
+                            <button type="button" onclick="goToInvitationSlide(1)" class="slide-dot w-2 h-2 rounded-full bg-black/20 transition"></button>
+                            <button type="button" onclick="goToInvitationSlide(2)" class="slide-dot w-2 h-2 rounded-full bg-black/20 transition"></button>
+                            <button type="button" onclick="goToInvitationSlide(3)" class="slide-dot w-2 h-2 rounded-full bg-black/20 transition"></button>
+                            <button type="button" onclick="goToInvitationSlide(4)" class="slide-dot w-2 h-2 rounded-full bg-black/20 transition"></button>
                         </div>
-                    </footer>
+
+                        <button type="button" id="btn-next-slide" onclick="nextInvitationSlide()" class="px-3.5 py-2 rounded-full inv-accent-bg text-xs font-semibold flex items-center gap-1.5 shadow hover:brightness-110 transition">
+                            <span>Next</span> <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -938,8 +951,8 @@
 
                 <!-- Developer Key -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Developer Access Key (Password Login Developer)</label>
-                    <input type="text" id="adm-dev-key" class="w-full px-3 py-2 text-xs sm:text-sm font-mono bg-amber-50 border border-amber-300 rounded-xl">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kunci Cadangan Developer (Opsional / Rahasia)</label>
+                    <input type="text" id="adm-dev-key" placeholder="Kosongkan jika hanya memakai OTP WA Admin" class="w-full px-3 py-2 text-xs sm:text-sm font-mono bg-amber-50 border border-amber-300 rounded-xl">
                 </div>
 
                 <!-- 1-Click Client Activation Code Generator -->
@@ -1037,7 +1050,7 @@
     <script>
         // ==================== 1. PAYWALL & ADMIN CONFIGURATION ====================
         const DEFAULT_ADMIN_CONFIG = {
-            devKey: 'DEV-WEDDINGID-2026',
+            devKey: '',
             price: 'Rp 99.000',
             whatsapp: '6281234567890',
             bankName: 'BANK BCA — 8830912456',
@@ -1236,6 +1249,8 @@
         let rawUploadedPhotoBase64 = null;
         let rawUploadedPhotoMime = 'image/jpeg';
         let currentStudioResultBase64 = null;
+        let currentSlideIndex = 0;
+        const TOTAL_INVITATION_SLIDES = 5;
 
         let isMusicPlaying = false;
         let customAudioElement = null;
@@ -1260,8 +1275,67 @@
             populateEditorForms();
             applyThemeToInvitation();
             renderInvitationPreview();
+            goToInvitationSlide(0);
+            bindSlideNavigationEvents();
             startCountdownTimer();
         });
+
+        function goToInvitationSlide(index) {
+            currentSlideIndex = Math.max(0, Math.min(TOTAL_INVITATION_SLIDES - 1, index));
+            document.querySelectorAll('.invitation-slide').forEach((slideEl, idx) => {
+                if (idx === currentSlideIndex) slideEl.classList.remove('hidden');
+                else slideEl.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.slide-dot').forEach((dotEl, idx) => {
+                if (idx === currentSlideIndex) {
+                    dotEl.className = 'slide-dot w-5 h-2 rounded-full inv-accent-bg transition-all';
+                } else {
+                    dotEl.className = 'slide-dot w-2 h-2 rounded-full bg-black/20 transition-all';
+                }
+            });
+
+            const prevBtn = document.getElementById('btn-prev-slide');
+            const nextBtn = document.getElementById('btn-next-slide');
+            if (prevBtn) prevBtn.disabled = currentSlideIndex === 0;
+            if (nextBtn) {
+                nextBtn.innerHTML = currentSlideIndex === TOTAL_INVITATION_SLIDES - 1
+                    ? '<span>Awal</span> <i class="fa-solid fa-rotate-left"></i>'
+                    : '<span>Next</span> <i class="fa-solid fa-chevron-right"></i>';
+            }
+        }
+
+        function nextInvitationSlide() {
+            if (currentSlideIndex >= TOTAL_INVITATION_SLIDES - 1) goToInvitationSlide(0);
+            else goToInvitationSlide(currentSlideIndex + 1);
+        }
+
+        function prevInvitationSlide() {
+            if (currentSlideIndex > 0) goToInvitationSlide(currentSlideIndex - 1);
+        }
+
+        function bindSlideNavigationEvents() {
+            document.addEventListener('keydown', (e) => {
+                if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+                if (e.key === 'ArrowRight') nextInvitationSlide();
+                else if (e.key === 'ArrowLeft') prevInvitationSlide();
+            });
+
+            const frame = document.getElementById('invitation-container');
+            if (!frame) return;
+            let touchStartX = 0;
+            frame.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches.length === 1) touchStartX = e.touches[0].clientX;
+            }, { passive: true });
+            frame.addEventListener('touchend', (e) => {
+                if (!e.changedTouches || e.changedTouches.length === 0) return;
+                const deltaX = e.changedTouches[0].clientX - touchStartX;
+                if (Math.abs(deltaX) > 55) {
+                    if (deltaX < 0) nextInvitationSlide();
+                    else prevInvitationSlide();
+                }
+            }, { passive: true });
+        }
 
         // ==================== 5. PAYWALL & DEVELOPER ACCESS LOGIC ====================
         function loadAdminConfig() {
@@ -1308,17 +1382,16 @@
             otpExpiresAt = Date.now() + 5 * 60 * 1000;
 
             const box = document.getElementById('otp-sim-box');
-            const codeEl = document.getElementById('otp-sim-code');
-            const waTargetEl = document.getElementById('otp-sim-wa-target');
+            const targetLabel = document.getElementById('otp-target-wa-label');
             const waLinkBtn = document.getElementById('otp-open-wa-btn');
 
-            if (codeEl) codeEl.textContent = generatedOtpCode;
-            if (waTargetEl) waTargetEl.textContent = targetWa;
+            if (targetLabel) targetLabel.textContent = targetWa;
             if (box) box.classList.remove('hidden');
 
             const waMsg = `Kode OTP Login Developer *Wedding.id* ke nomor *${targetWa}* adalah: *${generatedOtpCode}* (berlaku 5 menit).`;
+            const waUrl = `https://wa.me/${targetWa}?text=${encodeURIComponent(waMsg)}`;
             if (waLinkBtn) {
-                waLinkBtn.href = `https://wa.me/${targetWa}?text=${encodeURIComponent(waMsg)}`;
+                waLinkBtn.href = waUrl;
             }
 
             if (otpCountdownInterval) clearInterval(otpCountdownInterval);
@@ -1327,7 +1400,7 @@
                 const timerEl = document.getElementById('otp-sim-timer');
                 const mm = String(Math.floor(remainSec / 60)).padStart(2, '0');
                 const ss = String(remainSec % 60).padStart(2, '0');
-                if (timerEl) timerEl.textContent = `${mm}:${ss}`;
+                if (timerEl) timerEl.textContent = `(${mm}:${ss})`;
                 if (remainSec <= 0) {
                     generatedOtpCode = null;
                     clearInterval(otpCountdownInterval);
@@ -1335,32 +1408,39 @@
             };
             updateTimer();
             otpCountdownInterval = setInterval(updateTimer, 1000);
-            showToast(`Kode OTP simulasi (${generatedOtpCode}) dibuat untuk WA ${targetWa}.`, 'success');
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
+            showToast(`OTP rahasia dikirim ke WA ${targetWa}. Cek WhatsApp lalu masukkan kodenya.`, 'success');
         }
 
-        function fillSimulatedOtp() {
-            if (!generatedOtpCode || Date.now() > otpExpiresAt) {
-                showToast('Klik "Kirim / Buat Kode OTP" terlebih dahulu.', 'warning');
-                return;
+        function fillDefaultDevKey() {
+            const inp = document.getElementById('dev-key-input');
+            if (inp) {
+                inp.focus();
             }
-            const inp = document.getElementById('otp-code-input');
-            if (inp) inp.value = generatedOtpCode;
         }
 
-        function verifyDeveloperOtp(event) {
+        function verifyDeveloperAccess(event) {
             event.preventDefault();
-            const entered = (document.getElementById('otp-code-input')?.value || '').trim();
-            if (!generatedOtpCode || Date.now() > otpExpiresAt) {
-                showToast('Kode OTP sudah kedaluwarsa atau belum dibuat. Silakan buat kode OTP baru.', 'error');
+            const entered = (document.getElementById('dev-key-input')?.value || '').trim();
+            if (!entered) {
+                showToast('Masukkan kode OTP WhatsApp Admin terlebih dahulu.', 'warning');
                 return;
             }
-            if (entered === generatedOtpCode) {
+
+            if (adminConfig.devKey && entered === adminConfig.devKey) {
+                unlockStudio('developer', true);
+                return;
+            }
+
+            const otpValid = Boolean(generatedOtpCode) && Date.now() <= otpExpiresAt && entered === generatedOtpCode;
+            if (otpValid) {
                 generatedOtpCode = null;
                 if (otpCountdownInterval) clearInterval(otpCountdownInterval);
                 unlockStudio('developer', true);
-            } else {
-                showToast('Kode OTP tidak sesuai! Periksa kembali kode OTP yang dibuat.', 'error');
+                return;
             }
+
+            showToast('Kode OTP tidak valid atau sudah kedaluwarsa. Klik "Kirim OTP ke WA" lagi.', 'error');
         }
 
         function switchGateTab(tab) {
@@ -1400,13 +1480,7 @@
         }
 
         function verifyDeveloperLogin(event) {
-            event.preventDefault();
-            const key = document.getElementById('dev-key-input').value.trim();
-            if (key === adminConfig.devKey) {
-                unlockStudio('developer', true);
-            } else {
-                showToast('Developer Access Key salah!', 'error');
-            }
+            verifyDeveloperAccess(event);
         }
 
         function unlockStudio(role, notify = true) {
@@ -1495,11 +1569,10 @@
 
         function saveAdminSettings() {
             adminConfig.price = document.getElementById('adm-price').value.trim() || 'Rp 99.000';
-            adminConfig.whatsapp = document.getElementById('adm-wa').value.trim() || '6281234567890';
+            adminConfig.whatsapp = sanitizeWaNumber(document.getElementById('adm-wa').value.trim() || '6281234567890');
             adminConfig.bankName = document.getElementById('adm-bank').value.trim();
             adminConfig.bankHolder = document.getElementById('adm-holder').value.trim();
-            const newDevKey = document.getElementById('adm-dev-key').value.trim();
-            if (newDevKey) adminConfig.devKey = newDevKey;
+            adminConfig.devKey = document.getElementById('adm-dev-key').value.trim();
 
             saveAdminConfigToStorage();
             syncPaywallUI();
@@ -2329,11 +2402,13 @@
         }
 
         function openInvitationEnvelope() {
+            goToInvitationSlide(0);
             document.getElementById('invitation-cover-curtain').classList.add('opened');
             if (!isMusicPlaying) startMusicPlayback();
         }
 
         function reopenEnvelopeCover() {
+            goToInvitationSlide(0);
             document.getElementById('invitation-cover-curtain').classList.remove('opened');
             document.getElementById('invitation-container').scrollIntoView({ behavior: 'smooth' });
         }
