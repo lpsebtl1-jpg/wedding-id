@@ -1843,8 +1843,6 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Merancang Tema & Puisi dengan Gemini AI...</span>';
 
             try {
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
                 const payload = {
                     contents: [{
@@ -1872,13 +1870,12 @@
                     }
                 };
 
-                const response = await fetchWithRetry(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
+                const { data: result, error: aiError } = await weddingDb.functions.invoke('gemini-ai', { body: { mode: 'theme', payload } });
+                if (aiError) {
+                    let detail;
+                    try { detail = await aiError.context?.json(); } catch {}
+                    throw new Error(detail?.error || aiError.message);
+                }
                 const rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text;
                 if (!rawJson) throw new Error('Respons AI kosong');
 
@@ -1903,7 +1900,7 @@
                 showToast(`✨ Tema AI "${aiTheme.themeName}" & kutipan berhasil diterapkan!`, 'success');
             } catch (err) {
                 console.error(err);
-                showToast('Gagal menghubungi Gemini AI. Pastikan koneksi internet aktif.', 'error');
+                showToast(err.message || 'Gagal menghubungi Gemini AI.', 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
@@ -1963,8 +1960,6 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>AI Sedang Memproses Foto Studio (10-20 detik)...</span>';
 
             try {
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
 
                 const payload = {
                     contents: [{
@@ -1977,13 +1972,12 @@
                     generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
                 };
 
-                const response = await fetchWithRetry(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
+                const { data: result, error: aiError } = await weddingDb.functions.invoke('gemini-ai', { body: { mode: 'photo', payload } });
+                if (aiError) {
+                    let detail;
+                    try { detail = await aiError.context?.json(); } catch {}
+                    throw new Error(detail?.error || aiError.message);
+                }
                 const imagePart = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
                 if (!imagePart || !imagePart.inlineData?.data) throw new Error('Model tidak mengembalikan gambar');
 
@@ -1996,7 +1990,7 @@
                 showToast('🎉 Foto Prewedding Studio AI selesai dibuat!', 'success');
             } catch (err) {
                 console.error(err);
-                showToast('Gagal memproses foto dengan AI. Silakan coba lagi.', 'error');
+                showToast(err.message || 'Gagal memproses foto dengan AI.', 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalHtml;
