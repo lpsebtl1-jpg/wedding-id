@@ -132,6 +132,22 @@
             #invitation-container { max-width: 100%; overflow-wrap: anywhere; }
             #toast-container { left: 12px; right: 12px; max-width: calc(100% - 24px); }
         }
+        #editor-panel.hidden, #preview-panel.hidden, #studio-navbar.hidden, #paywall-gate.hidden { display:none !important; }
+        @media (max-width:1023px) {
+          html, body { width:100%; overflow-x:clip; }
+          #main-workspace { display:block; width:100%; min-width:0; }
+          #editor-panel, #preview-panel { width:100%; max-width:100%; min-width:0; }
+          #editor-panel > div { min-width:0; max-width:100%; padding:12px; }
+          #editor-panel section, #editor-panel .flex > div { min-width:0; }
+          #editor-panel button, #editor-panel label { max-width:100%; overflow-wrap:anywhere; }
+          #editor-panel nav { width:100%; overflow-x:auto; }
+          #editor-panel textarea { min-height:100px; }
+          #preview-panel #invitation-container { width:100%; max-width:480px; }
+          #floating-vinyl-btn { position:absolute; }
+          #cloud-tools { position:static !important; margin:12px auto; width:calc(100% - 24px); max-width:480px !important; font-size:13px; }
+          #studio-navbar > div { height:auto; flex-wrap:wrap; gap:8px; padding:10px 12px; }
+          #studio-navbar > div > div { min-width:0; max-width:100%; flex-wrap:wrap; }
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased selection:bg-amber-200 selection:text-slate-900">
@@ -709,12 +725,6 @@
                 </button>
             </div>
 
-            <!-- ==================== INVITATION FRAME ==================== -->
-            <div id="invitation-container" class="inv-theme-wrapper relative w-full max-w-[480px] min-h-[820px] sm:rounded-[2.2rem] shadow-2xl overflow-hidden border border-slate-300/60">
-                
-                <!-- FLOATING VINYL MUSIC PLAYER -->
-                <button onclick="toggleMusicPlayback()" id="floating-vinyl-btn" title="Putar / Jeda Musik" class="fixed sm:absolute bottom-5 right-5 z-40 w-12 h-12 rounded-full vinyl-disc flex items-center justify-center text-amber-300 border-2 border-amber-400/50 transition transform hover:scale-105">
-                    <div id="vinyl-spinner" class="w-full h-full rounded-full flex items-center justify-center">
             <!-- ==================== INVITATION FRAME (PER-SLIDE DECK) ==================== -->
             <div id="invitation-container" class="inv-theme-wrapper relative w-full max-w-[480px] min-h-[760px] sm:rounded-[2.2rem] shadow-2xl overflow-hidden border border-slate-300/60 flex flex-col">
                 
@@ -1284,6 +1294,7 @@
 
             const isGuestLink = await parseUrlParameters();
             if (!isGuestLink) {
+                setWorkspaceMode(window.innerWidth >= 1024 ? "split" : "editor");
                 checkSavedSessionUnlock();
             }
 
@@ -1688,7 +1699,11 @@
             }
         }
 
+        window.matchMedia("(min-width:1024px)").addEventListener("change", e => {
+            if (!document.getElementById("studio-navbar").classList.contains("hidden")) setWorkspaceMode(e.matches ? "split" : "editor");
+        });
         function setWorkspaceMode(mode) {
+            if (mode === "split" && window.innerWidth < 1024) mode = "editor";
             const editorPanel = document.getElementById('editor-panel');
             const previewPanel = document.getElementById('preview-panel');
             const btnSplit = document.getElementById('btn-mode-split');
@@ -2496,7 +2511,8 @@
  panel.querySelectorAll('button').forEach(b=>b.style.cssText='background:#164e63;color:white;padding:6px;border-radius:5px');
  document.body.append(panel);
  panel.style.display="none";
- const syncPanel=()=>{panel.style.display=currentAccessRole?"block":"none";};
+ panel.id="cloud-tools";
+ const syncPanel=()=>{panel.style.display=currentAccessRole && !document.getElementById("studio-navbar").classList.contains("hidden") && !document.getElementById("editor-panel").classList.contains("hidden")?"block":"none";};
  setInterval(syncPanel,500);
  const status = t => panel.querySelector('#cloud-status').textContent=t;
  const refresh = async () => { if(!db) throw Error('Supabase tidak tersedia'); const {data,error}=await db.auth.getSession(); if(error) throw error; const uid=data.session?.user.id||null; if(uid!==owner) activeId=null; owner=uid; return data.session; };
