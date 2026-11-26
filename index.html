@@ -88,6 +88,50 @@
             opacity: 0;
             pointer-events: none;
         }
+
+        /* Responsive layout: keep all existing application logic intact. */
+        html, body { max-width: 100%; margin: 0; }
+        #paywall-gate > div, #admin-modal > div, #publish-modal > div { min-width: 0; max-width: min(100%, 36rem); flex-shrink: 1; }
+        #paywall-gate *, #admin-modal *, #publish-modal * { box-sizing: border-box; }
+        #paywall-gate input, #admin-modal input, #publish-modal input { min-width: 0; max-width: 100%; }
+        #gate-content-client .flex-1, #adm-codes-list, #adm-codes-list > * { min-width: 0; overflow-wrap: anywhere; max-width: 100%; }
+        #gate-bank-name, #gate-bank-holder { overflow-wrap: anywhere; }
+        #editor-panel, #preview-panel { min-width: 0; }
+        @media (max-width: 767px) {
+            #paywall-gate, #admin-modal, #publish-modal { padding: 12px; align-items: flex-start; justify-content: center; }
+            #paywall-gate > div, #admin-modal > div, #publish-modal > div { width: 100%; margin-block: auto; border-radius: 20px; }
+            #paywall-gate > div > div:first-child { padding: 16px; gap: 8px; }
+            #paywall-gate > div > div:first-child > div { min-width: 0; }
+            #paywall-gate > div > div:first-child > div > div:first-child { flex-shrink: 0; }
+            #paywall-gate h2 { font-size: 17px; line-height: 1.25; }
+            #paywall-gate h2 + span { font-size: 9px; }
+            #paywall-gate h2 { overflow-wrap: anywhere; }
+            #paywall-gate h2, #paywall-gate h2 + span { max-width: 100%; }
+            #paywall-gate h2 + span { white-space: nowrap; }
+            #paywall-gate > div > div:first-child .flex.items-center.gap-2 { flex-wrap: wrap; gap: 4px; }
+            #paywall-gate > div > div:nth-child(2) { margin: 12px 12px 0; grid-template-columns: repeat(2,minmax(0,1fr)); }
+            #gate-tab-client, #gate-tab-dev { padding: 10px 4px; font-size: 11px; min-width: 0; white-space: normal; }
+            #gate-tab-client svg, #gate-tab-dev svg { flex-shrink: 0; }
+            #gate-content-client, #gate-content-dev { padding: 14px; }
+            #gate-content-client > div:first-child { flex-direction: column; padding: 12px; }
+            #gate-content-client > div:first-child > .flex-1 { width: 100%; text-align: center; }
+            #gate-content-client button, #gate-content-dev button { white-space: normal; overflow-wrap: anywhere; }
+            #paywall-gate input, #admin-modal input, #publish-modal input, #editor-panel input:not([type=range]):not([type=checkbox]), #editor-panel textarea, #editor-panel select { font-size: 16px; }
+            #studio-navbar > div { height: auto; min-height: 64px; flex-wrap: wrap; padding: 8px 12px; gap: 8px; }
+            #studio-navbar > div > div:first-child { flex: 1 1 100%; }
+            #studio-navbar > div > div:nth-child(2), #studio-navbar > div > div:nth-child(3) { flex-wrap: wrap; min-width: 0; }
+            #studio-navbar { position: relative; }
+            #editor-panel nav { max-width: 100%; overflow-x: auto; }
+            #editor-panel img, #preview-panel img { max-width: 100%; }
+            #editor-panel input, #editor-panel textarea, #editor-panel select { min-width: 0; max-width: 100%; }
+            #admin-modal > div, #publish-modal > div { padding: 16px; }
+            #admin-modal h3, #publish-modal h3 { font-size: 16px; }
+            #admin-modal .flex.items-center.justify-between, #publish-modal .flex.items-center.justify-between { gap: 8px; }
+            #admin-modal .flex.items-center.justify-between > button, #publish-modal .flex.items-center.justify-between > button { flex-shrink: 0; }
+            #admin-modal .flex-1, #publish-modal .flex-1 { min-width: 0; }
+            #invitation-container { max-width: 100%; overflow-wrap: anywhere; }
+            #toast-container { left: 12px; right: 12px; max-width: calc(100% - 24px); }
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased selection:bg-amber-200 selection:text-slate-900">
