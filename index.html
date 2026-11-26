@@ -987,7 +987,7 @@
 
             <!-- Generated Portable URL -->
             <div class="space-y-1.5">
-                <label class="block text-xs font-bold text-slate-700">Tautan Undangan Portabel (<code class="text-amber-700">#inv=...</code>):</label>
+                <label class="block text-xs font-bold text-slate-700">Tautan Undangan Pendek: <button onclick="publishShortLink()" class="text-amber-700 underline">Terbitkan / Perbarui</button></label>
                 <div class="flex gap-2">
                     <input type="text" id="published-url-output" readonly class="flex-1 px-3 py-2.5 text-xs bg-slate-100 border border-slate-200 rounded-xl text-slate-700 font-mono">
                     <button onclick="copyPublishedUrl()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 shrink-0 transition">
@@ -1001,7 +1001,7 @@
                 <button onclick="shareToWhatsApp()" class="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
                     <i class="fa-brands fa-whatsapp text-base"></i> Kirim ke WhatsApp
                 </button>
-                <button onclick="activatePureGuestMode()" class="py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
+                <button onclick="if(document.getElementById('published-url-output').value) window.open(document.getElementById('published-url-output').value,'_blank','noopener,noreferrer')" class="py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
                     <i data-lucide="external-link" class="w-4 h-4"></i> Buka Tampilan Tamu
                 </button>
             </div>
@@ -1232,13 +1232,13 @@
         let toneSynth = null;
 
         // ==================== 4. INITIALIZATION ====================
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             if (window.lucide) lucide.createIcons();
             loadAdminConfig();
             loadStateFromStorage();
             syncPaywallUI();
 
-            const isGuestLink = parseUrlParameters();
+            const isGuestLink = await parseUrlParameters();
             if (!isGuestLink) {
                 checkSavedSessionUnlock();
             }
@@ -1460,8 +1460,25 @@
         }
 
         // ==================== 7. PORTABLE HASH LINK & URL PARSER ====================
-        function parseUrlParameters() {
+        async function parseUrlParameters() {
             const params = new URLSearchParams(window.location.search);
+            if (params.has('id')) {
+                try {
+                    const {data,error} = await window.weddingDb.rpc('read_public_wedding', {p_id:params.get('id')});
+                    if(error || !data) throw Error('Undangan tidak ditemukan');
+                    appState = {...JSON.parse(JSON.stringify(DEFAULT_STATE)), ...data};
+                    const guest = params.get('to') || 'Tamu Undangan Spesial';
+                    document.getElementById('live-guest-name').textContent = guest;
+                    document.getElementById('rsvp-name').value = params.get('to') || '';
+                    document.getElementById('paywall-gate').classList.add('hidden');
+                    activatePureGuestMode(false);
+                    document.getElementById('guest-mode-banner').classList.add('hidden');
+                    return true;
+                } catch(e) {
+                    document.body.textContent = 'Undangan tidak tersedia. Periksa link atau coba lagi.';
+                    throw e;
+                }
+            }
             const hashStr = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : '';
             const hashParams = new URLSearchParams(hashStr);
 
@@ -1502,52 +1519,31 @@
             return false;
         }
 
+        let publishedId = null, publishing = false;
         function updatePublishedLink() {
-            const guestName = document.getElementById('publish-guest-input').value.trim();
-            const customDomain = document.getElementById('publish-domain-input').value.trim();
-            appState.customDomain = customDomain;
-            saveStateToStorage();
-
-            const baseUrl = customDomain ? customDomain.split('#')[0].split('?')[0] : window.location.href.split('#')[0].split('?')[0];
-
-            // Kemas data undangan portabel ke dalam URL hash (#inv=...)
-            const portablePayload = {
-                headerTitle: appState.headerTitle,
-                quote: appState.quote,
-                groom: {
-                    nick: appState.groom.nick,
-                    full: appState.groom.full,
-                    parents: appState.groom.parents,
-                    avatar: appState.groom.avatar.startsWith('http') ? appState.groom.avatar : ''
-                },
-                bride: {
-                    nick: appState.bride.nick,
-                    full: appState.bride.full,
-                    parents: appState.bride.parents,
-                    avatar: appState.bride.avatar.startsWith('http') ? appState.bride.avatar : ''
-                },
-                loveStory: appState.loveStory,
-                event: appState.event,
-                bank: appState.bank,
-                themeId: appState.themeId,
-                colors: appState.colors,
-                coverImage: appState.coverImage.startsWith('http') ? appState.coverImage : '',
-                brandLogo: appState.brandLogo && appState.brandLogo.length < 15000 ? appState.brandLogo : ''
-            };
-
-            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(portablePayload))));
-            const hashParams = new URLSearchParams();
-            hashParams.set('inv', encoded);
-
-            if (guestName) {
-                hashParams.set('to', guestName);
-                document.getElementById('live-guest-name').textContent = guestName;
-            } else {
-                document.getElementById('live-guest-name').textContent = 'Tamu Undangan Spesial';
-            }
-
-            const fullLink = `${baseUrl}#${hashParams.toString()}`;
-            document.getElementById('published-url-output').value = fullLink;
+            const guest = document.getElementById('publish-guest-input').value.trim();
+            document.getElementById('live-guest-name').textContent = guest || 'Tamu Undangan Spesial';
+            const output = document.getElementById('published-url-output');
+            if(!publishedId){output.value='';return;}
+            try {
+                const url = new URL(document.getElementById('publish-domain-input').value.trim() || location.href);
+                if(!['https:','http:'].includes(url.protocol)) throw Error();
+                url.hash=''; url.search=''; url.searchParams.set('id',publishedId);
+                if(guest) url.searchParams.set('to',guest);
+                output.value=url.href;
+            } catch(e){output.value='';}
+        }
+        async function publishShortLink() {
+            if(publishing)return;
+            publishing=true; publishedId=null; updatePublishedLink();
+            try {
+                const keys=['brandLogo','themeId','colors','headerTitle','quote','groom','bride','loveStory','event','bank','musicPreset','coverImage','gallery'];
+                const payload=Object.fromEntries(keys.map(k=>[k,appState[k]]));
+                const {data,error}=await window.weddingDb.rpc('publish_public_wedding',{p_data:payload});
+                if(error)throw error;
+                publishedId=data; updatePublishedLink();
+                showToast('Link pendek berhasil diterbitkan!','success');
+            }catch(e){showToast('Gagal menerbitkan: '+e.message,'error');}finally{publishing=false;}
         }
 
         function downloadStandaloneHtml() {
@@ -2344,7 +2340,7 @@
 
         function openPublishModal() {
             document.getElementById('publish-modal').classList.remove('hidden');
-            updatePublishedLink();
+            publishShortLink();
         }
 
         function closePublishModal() {
@@ -2352,11 +2348,13 @@
         }
 
         function copyPublishedUrl() {
+            if(!document.getElementById('published-url-output').value) return showToast('Tunggu link diterbitkan.','error');
             copyToClipboard(document.getElementById('published-url-output').value, 'Link undangan berhasil disalin!');
         }
 
         function shareToWhatsApp() {
             const url = document.getElementById('published-url-output').value;
+            if(!url) return showToast('Tunggu link diterbitkan.','error');
             const guestName = document.getElementById('publish-guest-input').value.trim() || 'Bapak/Ibu/Saudara/i';
             const couple = `${appState.groom.nick} & ${appState.bride.nick}`;
             const message = `Kepada Yth. *${guestName}*,\n\nTanpa mengurangi rasa hormat, perkenankan kami mengundang Anda untuk hadir dan memberikan doa restu pada acara pernikahan kami:\n\n*${couple}*\n📅 ${formatIndoDate(appState.event.akadDate)}\n📍 ${appState.event.resepsiVenue}\n\nBuka undangan digital lengkap melalui tautan berikut:\n${url}\n\nTerima kasih.`;
