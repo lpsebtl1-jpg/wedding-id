@@ -148,6 +148,7 @@
           #studio-navbar > div { height:auto; flex-wrap:wrap; gap:8px; padding:10px 12px; }
           #studio-navbar > div > div { min-width:0; max-width:100%; flex-wrap:wrap; }
         }
+    @media (max-width:767px) { #editor-panel section input, #editor-panel section select, #editor-panel section textarea { width:100%; min-width:0; } #editor-panel section button { white-space:normal; } #editor-panel section .grid > * { min-width:0; } }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased selection:bg-amber-200 selection:text-slate-900">
@@ -449,12 +450,14 @@
                             <div>
                                 <h2 class="font-serif font-bold text-base sm:text-lg text-slate-900">AI Prewedding Photo Studio</h2>
                                 <p class="text-xs text-slate-600 leading-relaxed mt-0.5">
-                                    Unggah foto mentahan pasangan berlatar merah/biru atau selfie biasa, pilih konsep studio, dan biarkan <strong>Gemini AI</strong> menyulapnya menjadi foto studio profesional!
+                                    Fitur AI foto belum tersedia pada versi saat ini. Anda tetap dapat mengunggah foto sendiri melalui menu Galeri atau Sampul.
                                 </p>
                             </div>
                         </div>
                     </div>
 
+                    <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-slate-700" role="status"><strong>AI Photo Studio — Segera hadir</strong><p class="mt-2">Gunakan unggahan foto manual untuk sementara. AI tema dan kutipan tetap tersedia.</p></div>
+                    <div class="hidden" aria-hidden="true">
                     <!-- Step 1: Upload Raw Photo -->
                     <div class="space-y-2">
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600">1. Unggah Foto Mentahan Pasangan (Latar Merah / Kasual)</label>
@@ -513,12 +516,13 @@
                             </div>
                         </div>
 
-                        <button id="btn-generate-studio-photo" onclick="generateAIPreweddingPhoto()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
+                        <button id="btn-generate-studio-photo" disabled onclick="generateAIPreweddingPhoto()" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-rose-600 via-pink-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition">
                             <i data-lucide="wand-2" class="w-4 h-4"></i>
                             <span>Sulap Jadi Foto Studio Profesional (Gemini AI)</span>
                         </button>
                     </div>
 
+                    </div>
                     <!-- Step 4: Studio Result -->
                     <div id="studio-result-container" class="hidden rounded-2xl border-2 border-amber-400/60 bg-slate-900 text-white p-4 space-y-4 shadow-xl">
                         <div class="flex items-center justify-between">
@@ -1945,56 +1949,7 @@
         }
 
         async function generateAIPreweddingPhoto() {
-            if (!rawUploadedPhotoBase64) {
-                showToast('Unggah foto mentahan pasangan terlebih dahulu (Langkah 1).', 'warning');
-                return;
-            }
-
-            const preset = STUDIO_PRESETS.find(p => p.id === selectedStudioPreset) || STUDIO_PRESETS[0];
-            const customDetail = document.getElementById('studio-custom-detail').value.trim();
-            const fullPrompt = customDetail ? `${preset.prompt} Additional styling: ${customDetail}` : preset.prompt;
-
-            const btn = document.getElementById('btn-generate-studio-photo');
-            const originalHtml = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>AI Sedang Memproses Foto Studio (10-20 detik)...</span>';
-
-            try {
-
-                const payload = {
-                    contents: [{
-                        role: "user",
-                        parts: [
-                            { text: fullPrompt },
-                            { inlineData: { mimeType: rawUploadedPhotoMime, data: rawUploadedPhotoBase64 } }
-                        ]
-                    }],
-                    generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
-                };
-
-                const { data: result, error: aiError } = await weddingDb.functions.invoke('gemini-ai', { body: { mode: 'photo', payload } });
-                if (aiError) {
-                    let detail;
-                    try { detail = await aiError.context?.json(); } catch {}
-                    throw new Error(detail?.error || aiError.message);
-                }
-                const imagePart = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-                if (!imagePart || !imagePart.inlineData?.data) throw new Error('Model tidak mengembalikan gambar');
-
-                const mime = imagePart.inlineData.mimeType || 'image/png';
-                currentStudioResultBase64 = `data:${mime};base64,${imagePart.inlineData.data}`;
-
-                document.getElementById('studio-result-badge').textContent = preset.name;
-                document.getElementById('studio-result-container').classList.remove('hidden');
-                applyCanvasStudioFilter();
-                showToast('🎉 Foto Prewedding Studio AI selesai dibuat!', 'success');
-            } catch (err) {
-                console.error(err);
-                showToast(err.message || 'Gagal memproses foto dengan AI.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
-            }
+            showToast('AI Photo Studio belum tersedia. Gunakan unggahan foto manual.', 'warning');
         }
 
         function applyCanvasStudioFilter() {
